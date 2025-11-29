@@ -311,14 +311,15 @@ void run_cmd_interface()
 {
     char c = 0, last_c = 0;
 
+    logline;
     mrw_addr = (uint32_t*)0x20000000;
-    //lprintf("Version %s%s\n", VERSION, GIT_SHA1);
-    lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
+    //lprintf("Version %s%s\r\n", VERSION, GIT_SHA1);
+    lprint("\n\nclean_cmd. \r\n'c' key go cmd...\r\n");
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     lmemset((char*)&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;
-    lprintf_time("Enter CMD\n");
-    lprint("\nCleanCMD>");
+    lprintf_time("Enter CMD\r\n");
+    lprint("\r\nCleanCMD>");
 
     while(!quit_cmd){
         last_c = c;
@@ -327,13 +328,13 @@ void run_cmd_interface()
         if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
             if(c == ENTER_CHAR){
                 handle_cmd();
-                lprintf("\n");
+                lprintf("\r\n");
             }
             if(c == 0x03){
-                lprintf("^C\n");
+                lprintf("^C\r\n");
             }
             if(c == 0x1b){
-                lprintf("\n");
+                lprintf("\r\n");
             }
             lmemset(cmd_buf, 0, COM_MAX_LEN);
             cmd_buf_p = 0;
@@ -368,5 +369,5 @@ void run_cmd_interface()
         }
     }
     quit_cmd = 0;
-    lprintf_time("Quit CMD\n");
+    lprintf_time("Quit CMD\r\n");
 }
