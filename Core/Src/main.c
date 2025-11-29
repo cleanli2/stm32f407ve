@@ -65,6 +65,19 @@ void delay(int a)
     }
 }
 
+
+void __io_putchar(unsigned char c)
+{
+    HAL_USART_Transmit(&husart2, &c, 1, 10000);
+}
+
+
+void putchars(const unsigned char *pt)
+{
+    while(*pt)
+    	HAL_USART_Transmit(&husart2, (const unsigned char*)pt, 1, 10000);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -103,18 +116,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  int t=5;
+  while (t--)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
     delay(1000);
-    HAL_USART_Transmit(&husart2, "hello", 5, 10000);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
     delay(1000);
-    HAL_USART_Transmit(&husart2, "eeeeo", 5, 10000);
   }
+  run_cmd_interface();
   /* USER CODE END 3 */
 }
 

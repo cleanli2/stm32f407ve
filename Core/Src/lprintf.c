@@ -1,8 +1,10 @@
 #include "lprintf.h"
+#include "common.h"
+#include "stm32f4xx_hal.h"
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
-#include "common.h"
+
 
 char buf_printf_buf[64];
 char lprintf_buf[256];
@@ -69,11 +71,6 @@ void puthexchars(char *pt)
     }
 }
 
-void putchars(const char *pt)
-{
-    while(*pt)
-        __io_putchar(*pt++);
-}
 
 char * num2str(uint64_t jt, char * s, char n)
 {
@@ -158,11 +155,6 @@ void print_binary(uint32_t num)
         putchars(nc);
 }
 char sys_hour[14];
-static u32 date_hour_offset = 0xffffffff;
-void reset_time_offset()
-{
-    date_hour_offset = 0xffffffff;
-}
 
 char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 {
@@ -271,19 +263,6 @@ void lprintf(const char *fmt, ...)
 #endif
 }
 
-void oled_lprintf(int page, int column, const char *fmt, ...)
-{
-#if 1
-    va_list ap;
-
-    va_start(ap,fmt);
-    vslprintf(0, lprintf_buf,fmt,ap);
-    oled_putstr(page, column, lprintf_buf);
-    va_end(ap);
-#else
-    putchars(fmt);
-#endif
-}
 
 void slprintf(char*buf, const char *fmt, ...)
 {
@@ -291,26 +270,6 @@ void slprintf(char*buf, const char *fmt, ...)
     va_start(ap,fmt);
     vslprintf(0, buf,fmt,ap);
     va_end(ap);
-}
-uint16_t LCD_PRINT_BACK_COLOR = WHITE;
-uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
-void lcd_lprintf_win(uint32_t chscale, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const char *fmt, ...)
-{
-    va_list ap;
-    lmemset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
-    va_start(ap,fmt);
-    vslprintf(0, lcdprintf_buf,fmt,ap);
-    va_end(ap);
-    Show_Str_win(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, w, h, chscale);
-}
-void lcd_lprintf(uint32_t chscale, uint32_t x, uint32_t y, const char *fmt, ...)
-{
-    va_list ap;
-    lmemset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
-    va_start(ap,fmt);
-    vslprintf(0, lcdprintf_buf,fmt,ap);
-    va_end(ap);
-    Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, chscale);
 }
 
 void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
