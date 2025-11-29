@@ -277,11 +277,12 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
     const char*line_stt = buf;
     uint32_t left=len, line_len;
 
-    putchars("\nMemShow Start:");
+    putchars("\r\nMemShow Start:");
     while(left){
         int j, li;
         line_len = left>16?16:left;
         li=line_len;
+        __io_putchar('\r');
         __io_putchar('\n');
         print_hex(ct_start);
         __io_putchar(':');
@@ -308,5 +309,5 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
         line_stt+=line_len;
         ct_start+=line_len;
     }
-    lprintf("\nMemShow End:\n");
+    lprintf("\r\nMemShow End:\r\n");
 }
