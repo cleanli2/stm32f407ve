@@ -16,15 +16,6 @@ extern uint32_t logv;
 void delay(int a);
 uint get_howmany_para(char *s);
 char * str_to_str(char *s, char**result);
-/*
-void con_send(char X)
-{
-    __io_putchar(X);
-    if(X == '\n'){
-        __io_putchar('\r');
-    }
-}
-*/
 uint32_t ci=0;
 
 uint8_t cmd_caches[CMD_CACHES_SIZE][COM_MAX_LEN] = {0};
@@ -69,7 +60,7 @@ char *lstrchr(const char *str, int c)
 void cmd_exit(char *p)
 {
     (void)p;
-    lprintf("Quit CMD!\n");
+    lprintf("Quit CMD!\r\n");
     quit_cmd = 1;
 
     return;
@@ -88,7 +79,7 @@ void history(char *p)
 {
     (void)p;
     uint32_t n = CMD_CACHES_SIZE, cix = cmdcache_index;
-    con_send('\n');
+    lprintf("\r\n");
     while(n--){
         if(cix==0){
             cix = CMD_CACHES_SIZE-1;
@@ -97,10 +88,10 @@ void history(char *p)
             cix--;
         }
         if(cmd_caches[cix][0]!=0){
-            lprintf("%s\n", cmd_caches[cix]);
+            lprintf("%s\r\n", cmd_caches[cix]);
         }
     }
-    con_send('\n');
+    lprintf("\r\n");
 
     return;
 }
@@ -120,6 +111,7 @@ static const struct command cmd_list[]=
     {"exit",cmd_exit},
     {"help",print_help},
     {"history",history},
+    {"pm", print_mem},
     {"r",read_mem},
     {"reboot",reboot},
     {"test",test},
@@ -137,12 +129,12 @@ void print_help(char *para)
 {
     (void)para;
     uint i = 0;
-    //lprintf("Version %s%s\n", VERSION, GIT_SHA1);
-    lprint("Cmd:\n");
+    //lprintf("Version %s%s\r\n", VERSION, GIT_SHA1);
+    lprint("Cmd:\r\n");
     while(1){
             if(cmd_list[i].cmd_name == NULL)
                     break;
-	    lprint("--%s\n", cmd_list[i].cmd_name);
+	    lprint("--%s\r\n", cmd_list[i].cmd_name);
             i++;
     }
 }
@@ -219,7 +211,7 @@ print:
     return;
 
 error:
-    lprint("Err!\npm [length]\n");
+    lprint("Err!\r\npm [length]\r\n");
 
 }
 
@@ -237,11 +229,11 @@ void write_mem(char *p)
     mrw_addr = (uint32_t*)((uint32_t)mrw_addr & 0xfffffffc);
 write:
     *(uint32_t*)mrw_addr = value;
-    lprint("Write 0x%x@0x%x\n",value,mrw_addr);
+    lprint("Write 0x%x@0x%x\r\n",value,mrw_addr);
     return;
 
 error:
-    lprint("Err!\nw v [addr]\n");
+    lprint("Err!\r\nw v [addr]\r\n");
 
 }
 
@@ -259,12 +251,12 @@ void read_mem(char *p)
     mrw_addr = (uint32_t*)((uint32_t)mrw_addr & 0xfffffffc);
 read:
     value = *(uint32_t*)mrw_addr;
-    lprint("Read 0x%x at memory 0x%x\n",value,mrw_addr);
+    lprint("Read 0x%x at memory 0x%x\r\n",value,mrw_addr);
 
     return;
 
 error:
-    lprint("Err!\nr addr\n");
+    lprint("Err!\r\nr addr\r\n");
 
 }
 
@@ -273,7 +265,7 @@ void handle_cmd()
     unsigned char i = 0;
     char *p_cmd, *p_buf;
 
-    lprint("\n");
+    lprint("\r\n");
     if(!cmd_buf[0])
 	return;
     //record the history cmd
@@ -295,12 +287,12 @@ void handle_cmd()
 	    }
 	    if(!(*p_cmd) && (*p_buf == ' ' || !(*p_buf))){
             	    cmd_list[i].cmd_fun(p_buf);
-                    lprint("'%s' done.\n", cmd_list[i].cmd_name);
+                    lprint("'%s' done.\r\n", cmd_list[i].cmd_name);
             	    return;
        	    }
 	    i++;
     }
-    lprint("Unknow cmd:%s\n",cmd_buf);
+    lprint("Unknow cmd:%s\r\n",cmd_buf);
 }
 #define POWER_TIMEOUT_S 10
 extern uint32_t shot_msct;
@@ -314,7 +306,7 @@ void run_cmd_interface()
     logline;
     mrw_addr = (uint32_t*)0x20000000;
     //lprintf("Version %s%s\r\n", VERSION, GIT_SHA1);
-    lprint("\n\nclean_cmd. \r\n'c' key go cmd...\r\n");
+    lprint("\r\n\r\nclean_cmd. \r\n'c' key go cmd...\r\n");
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     lmemset((char*)&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;
