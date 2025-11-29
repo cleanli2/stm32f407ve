@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmd.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -66,9 +67,9 @@ void delay(int a)
 }
 
 
-void __io_putchar(unsigned char c)
+void __io_putchar(char c)
 {
-    HAL_USART_Transmit(&husart2, &c, 1, 10000);
+    HAL_USART_Transmit(&husart2, (unsigned char*)&c, 1, 10000);
 }
 
 
@@ -76,6 +77,14 @@ void putchars(const unsigned char *pt)
 {
     while(*pt)
     	HAL_USART_Transmit(&husart2, (const unsigned char*)pt, 1, 10000);
+}
+
+
+uint8_t __io_getchar()
+{
+	uint8_t c;
+	while(HAL_OK!=HAL_USART_Receive(&husart2, &c, 1, 10000));
+	return c;
 }
 
 /* USER CODE END 0 */

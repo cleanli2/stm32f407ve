@@ -3,8 +3,8 @@
 #include<stdint.h>
 
 #define DEBUG_LOG_BUF_SIZE 2048
-int __io_putchar(int ch);
-uint16_t __io_getchar();
+void __io_putchar(char ch);
+uint8_t __io_getchar();
 int __io_char_received();
 
 extern uint16_t LCD_PRINT_BACK_COLOR;
