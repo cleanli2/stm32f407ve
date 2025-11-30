@@ -28,6 +28,7 @@ INC_FLAGS= \
 		   -I $(TOP)/Drivers/CMSIS/Device/ST/STM32F4xx/Include\
 		   -I $(TOP)/Drivers/CMSIS/Include
 
+SFLAGS = -mcpu=cortex-m4 -g3 -DDEBUG -x assembler-with-cpp --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 #CFLAGS =  -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -fstack-usage -fcyclomatic-complexity --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 CFLAGS =  -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -fstack-usage --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 CFLAGS +=  -W -Wall $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
@@ -35,8 +36,10 @@ CFLAGS +=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 #LDFLAGS =  -mthumb -mcpu=cortex-m4 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
 LDFLAGS = -mcpu=cortex-m4 --specs=nosys.specs -Wl,-Map="vet6.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 
-C_SRC=$(shell find ./ -name '*.c')  
+C_SRC=$(shell find ./ -name '*.c')
 C_OBJ=$(C_SRC:%.c=%.o)
+S_SRC=$(shell find ./ -name '*.s')
+S_OBJ=$(S_SRC:%.s=%.o)
 
 $(warning t=$(type))
 ifeq ($(type),)
@@ -57,8 +60,8 @@ LDFILE=STM32F407VETX_FLASH
 
 .PHONY: all clean
 
-all:$(C_OBJ)
-	$(CC) $(C_OBJ) -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
+all:$(C_OBJ) $(S_OBJ)
+	$(CC) $(C_OBJ) $(S_OBJ) -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
@@ -68,6 +71,9 @@ all:$(C_OBJ)
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(S_OBJ):%.o:%.s
+	$(CC) -c $(SFLAGS) -o $@ $<
 clean:
 	rm -f $(shell find ./ -name '*.o')
 	rm -f $(shell find ./ -name '*.d')
