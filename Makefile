@@ -13,15 +13,6 @@ export OBJDUMP        = arm-none-eabi-objdump
 TOP=$(shell pwd)
 
 INC_FLAGS= \
-           -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/inc             \
-		   -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/      \
-		   -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/CoreSupport/ \
-		   -I $(TOP)/src \
-		   -I $(TOP)/src/sd \
-		   -I $(TOP)/src/usb/USB/STM32_USB-FS-Device_Driver/inc \
-		   -I $(TOP)/src/usb/USB/CONFIG \
-		   -I $(TOP)/src/usb \
-		   -I $(TOP)/src/lcd800x480 \
 		   -I $(TOP)/Core/Inc\
 		   -I $(TOP)/Drivers/STM32F4xx_HAL_Driver/Inc\
 		   -I $(TOP)/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy\
@@ -30,11 +21,12 @@ INC_FLAGS= \
 
 SFLAGS = -mcpu=cortex-m4 -g3 -DDEBUG -x assembler-with-cpp --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 #CFLAGS =  -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -fstack-usage -fcyclomatic-complexity --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
-CFLAGS =  -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -fstack-usage --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
-CFLAGS +=  -W -Wall $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
-CFLAGS +=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
+CFLAGS1 = -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx
+#CFLAGS2 = $(INC_FLAGS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
+CFLAGS2 = $(INC_FLAGS) -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage                          --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
+CFLAGS2 += -DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 #LDFLAGS =  -mthumb -mcpu=cortex-m4 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
-LDFLAGS = -mcpu=cortex-m4 --specs=nosys.specs -Wl,-Map="vet6.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LDFLAGS = -mcpu=cortex-m4 --specs=nosys.specs -Wl,-Map=$(TARGET).map -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 
 C_SRC=$(shell find ./ -name '*.c')
 C_OBJ=$(C_SRC:%.c=%.o)
@@ -43,7 +35,7 @@ S_OBJ=$(S_SRC:%.s=%.o)
 
 $(warning t=$(type))
 ifeq ($(type),)
-	type=clt
+	type=notype
 endif
 ifeq ($(type),svr)
 CFLAGS+=-DSVR
@@ -70,7 +62,7 @@ all:$(C_OBJ) $(S_OBJ)
 	$(OBJDUMP) -d -S $(TARGET).elf > $(TARGET).asm
 
 $(C_OBJ):%.o:%.c
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS1) -c $(CFLAGS2) -o $@ $<
 
 $(S_OBJ):%.o:%.s
 	$(CC) -c $(SFLAGS) -o $@ $<
