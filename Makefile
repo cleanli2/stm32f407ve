@@ -48,7 +48,7 @@ ifeq ($(board),)
 board=dftbd
 endif
 CFLAGS+=-DSTM32F10X_LD
-LDFILE=STM32F407VETX_FLASH
+LDFILE=STM32F407VETX_FLASH_legacy
 
 .PHONY: all clean
 
