@@ -73,3 +73,4 @@ clean:
 	rm -f $(shell find ./ -name '*.elf')
 	rm -f $(shell find ./ -name '*.bin')
 	rm -f $(shell find ./ -name '*.asm')
+	rm -f $(shell find ./ -name '*.hex')

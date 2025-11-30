@@ -305,7 +305,11 @@ void run_cmd_interface()
 
     logline;
     mrw_addr = (uint32_t*)0x20000000;
-    //lprintf("Version %s%s\r\n", VERSION, GIT_SHA1);
+#ifdef GIT_SHA1
+    lprintf("GIT %s\r\n", GIT_SHA1);
+#else
+    lprintf("NO GIT info\r\n");
+#endif
     lprint("\r\n\r\nclean_cmd. \r\n'c' key go cmd...\r\n");
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     lmemset((char*)&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;

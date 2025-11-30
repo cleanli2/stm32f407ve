@@ -64,7 +64,7 @@ void delay(int a)
 {
     volatile int wt=a;
     while(wt--){
-        volatile int wt2=a;
+        volatile int wt2=1000;
         while(wt2--);
     }
 }
@@ -134,9 +134,11 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-    delay(1000);
+    delay(100);
+    logline;
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-    delay(1000);
+    delay(100);
+    logline;
   }
   run_cmd_interface();
   while(1);
