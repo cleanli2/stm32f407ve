@@ -140,6 +140,7 @@ int main(void)
     delay(100);
     logline;
   }
+  prt_dec(HAL_RCC_GetHCLKFreq());
   run_cmd_interface();
   while(1);
   /* USER CODE END 3 */
