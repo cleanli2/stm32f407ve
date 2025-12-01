@@ -100,10 +100,8 @@ void test(char*para)
 {
     (void)para;
     while(1){
-        delay(200);
-#ifdef SVR
-        prt_hex(LOCKPOSI_LOCKED());
-#endif
+        GPIOC->BSRR = GPIO_PIN_6;
+        GPIOC->BSRR = (uint32_t)GPIO_PIN_6<< 16U;
     }
 }
 static const struct command cmd_list[]=
