@@ -99,7 +99,8 @@ void history(char *p)
 
 void start_dma_uart_recv();
 int dma_uart_recved();
-extern const char*duf;
+//extern char*duf;
+extern char duf[];
 void test(char*p)
 {
     (void)p;
@@ -119,18 +120,19 @@ void test(char*p)
     }
     else if(para==1){
         lprintf("uart dma rcv test\r\n");
+        prt_hex(duf);
         lmemset(duf, 0, 20);
-        mem_print(duf, duf, 20);
+        mem_print(duf, (uint32_t)duf, 20);
         start_dma_uart_recv();
         while(1){
             logline;
             if(dma_uart_recved()){
                 lprintf("recved!\r\n");
-                mem_print(duf, duf, 20);
+                mem_print(duf, (uint32_t)duf, 20);
             }
             else{
                 delay(16000);
-                mem_print(duf, duf, 20);
+                mem_print(duf, (uint32_t)duf, 20);
             }
             logline;
         }
