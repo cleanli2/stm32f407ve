@@ -124,6 +124,10 @@ void test(char*p)
             if(dma_uart_recved()){
                 mem_print(duf, 0, 20);
             }
+            else{
+                delay(4000);
+                mem_print(duf, 0, 20);
+            }
         }
     }
 }

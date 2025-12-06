@@ -301,6 +301,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 void start_dma_uart_recv()
 {
+    logline;
     HAL_UART_Receive_DMA(&huart2, (uint8_t*) duf, 20);
 }
 int dma_uart_recved()
@@ -325,6 +326,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+      logline;
   }
   /* USER CODE END Error_Handler_Debug */
 }
