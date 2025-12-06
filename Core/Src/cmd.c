@@ -119,15 +119,20 @@ void test(char*p)
     }
     else if(para==1){
         lprintf("uart dma rcv test\r\n");
+        lmemset(duf, 0, 20);
+        mem_print(duf, duf, 20);
         start_dma_uart_recv();
         while(1){
+            logline;
             if(dma_uart_recved()){
-                mem_print(duf, 0, 20);
+                lprintf("recved!\r\n");
+                mem_print(duf, duf, 20);
             }
             else{
-                delay(4000);
-                mem_print(duf, 0, 20);
+                delay(16000);
+                mem_print(duf, duf, 20);
             }
+            logline;
         }
     }
 }
