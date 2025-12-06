@@ -303,7 +303,8 @@ void start_dma_uart_recv()
 {
     logline;
     prt_hex(duf);
-    HAL_UART_Receive_DMA(&huart2, (uint8_t*) duf, 20);
+    //HAL_UART_Receive_DMA(&huart2, (uint8_t*) duf, 20);
+    HAL_UARTEx_ReceiveToIdle_DMA(&huart2, (uint8_t*) duf, 20);
 }
 int dma_uart_recved()
 {
