@@ -125,16 +125,10 @@ void test(char*p)
         mem_print(duf, (uint32_t)duf, 20);
         start_dma_uart_recv();
         while(1){
-            logline;
             if(dma_uart_recved()){
                 lprintf("recved!\r\n");
                 mem_print(duf, (uint32_t)duf, 20);
             }
-            else{
-                delay(16000);
-                mem_print(duf, (uint32_t)duf, 20);
-            }
-            logline;
         }
     }
 }
