@@ -287,7 +287,31 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+char duf[20];
+static int gdur=0;
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(huart);
+  UNUSED(Size);
 
+  prt_dec(Size);
+  gdur=1;
+}
+
+void start_dma_uart_recv()
+{
+    HAL_UART_Receive_DMA(&huart2, (uint8_t*) duf, 20);
+}
+int dma_uart_recved()
+{
+    int ret=0;
+    if(gdur>0){
+        ret=1;
+        gdur=0;
+    }
+    return ret;
+}
 /* USER CODE END 4 */
 
 /**

@@ -13,6 +13,7 @@ static uint quit_cmd = 0;
 extern uint32_t task_mask;
 extern uint32_t logv;
 
+char * str_to_hex(char *s, uint32_t * result);
 void delay(int a);
 uint get_howmany_para(char *s);
 char * str_to_str(char *s, char**result);
@@ -96,12 +97,34 @@ void history(char *p)
     return;
 }
 
-void test(char*para)
+void start_dma_uart_recv();
+int dma_uart_recved();
+extern const char*duf;
+void test(char*p)
 {
-    (void)para;
-    while(1){
-        GPIOC->BSRR = GPIO_PIN_6;
-        GPIOC->BSRR = (uint32_t)GPIO_PIN_6<< 16U;
+    (void)p;
+    uint para = 0, np;
+
+    np = get_howmany_para(p);
+    if(np > 0){
+        str_to_hex(p, &para);
+    }
+    prt_hex(para);
+    if(para==0){
+        lprintf("gpio switch test\r\n");
+        while(1){
+            GPIOC->BSRR = GPIO_PIN_6;
+            GPIOC->BSRR = (uint32_t)GPIO_PIN_6<< 16U;
+        }
+    }
+    else if(para==1){
+        lprintf("uart dma rcv test\r\n");
+        start_dma_uart_recv();
+        while(1){
+            if(dma_uart_recved()){
+                mem_print(duf, 0, 20);
+            }
+        }
     }
 }
 static const struct command cmd_list[]=
