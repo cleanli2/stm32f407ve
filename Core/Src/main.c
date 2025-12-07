@@ -226,9 +226,15 @@ static void MX_SDIO_SD_Init(void)
   {
     Error_Handler();
   }
+  else{
+      lprintf("SD init OK\r\n");
+  }
   if (HAL_SD_ConfigWideBusOperation(&hsd, SDIO_BUS_WIDE_4B) != HAL_OK)
   {
     Error_Handler();
+  }
+  else{
+      lprintf("SD config wide BUS OK\r\n");
   }
   /* USER CODE BEGIN SDIO_Init 2 */
 
