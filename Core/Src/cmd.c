@@ -100,16 +100,19 @@ void history(char *p)
 void start_dma_uart_recv();
 int dma_uart_recved();
 void show_sdinfo();
+void sd_read(uint8_t*read_buf, uint p1, uint p2);
 //extern char*duf;
 extern char duf[];
+extern SD_HandleTypeDef hsd;
 void test(char*p)
 {
     (void)p;
     uint para = 0, np;
 
     np = get_howmany_para(p);
+    prt_dec(np);
     if(np > 0){
-        str_to_hex(p, &para);
+        p=str_to_hex(p, &para);
     }
     prt_hex(para);
     if(para==0){
@@ -135,6 +138,22 @@ void test(char*p)
     else if(para==2){
         lprintf("sd card info\r\n");
         show_sdinfo();
+    }
+    else if(para==3){
+        uint p1=0, p2=1;
+        lprintf("sd card read\r\n");
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        if(np >= 3){
+            p=str_to_hex(p, &p2);
+        }
+        prt_dec(p1);
+        prt_dec(p2);
+        prt_hex(HAL_SD_GetCardState(&hsd));
+        sd_read(read_buf, p1, p2);
+        prt_hex(HAL_SD_GetCardState(&hsd));
+        mem_print((char*)read_buf, (uint32_t)0, 512);
     }
 }
 static const struct command cmd_list[]=

@@ -366,10 +366,10 @@ void show_sdinfo()
     uint64_t sdcapa;
     HAL_SD_CardInfoTypeDef CardInfo;
     HAL_SD_GetCardInfo(&hsd, &CardInfo);
-    prt_dec(CardInfo.CardType    );
-    prt_dec(CardInfo.CardVersion );
-    prt_dec(CardInfo.Class       );
-    prt_dec(CardInfo.RelCardAdd  );
+    prt_hex(CardInfo.CardType    );
+    prt_hex(CardInfo.CardVersion );
+    prt_hex(CardInfo.Class       );
+    prt_hex(CardInfo.RelCardAdd  );
     prt_dec(CardInfo.BlockNbr    );
     prt_dec(CardInfo.BlockSize   );
     prt_dec(CardInfo.LogBlockNbr );
@@ -378,6 +378,10 @@ void show_sdinfo()
     lprintf("sd capacity is %d(%d) Gbytes\r\n",
             (uint32_t)(sdcapa/1024/1024/1024),
             (uint32_t)(sdcapa/1000000000));
+}
+void sd_read(uint8_t*read_buf, uint32_t p1, uint32_t p2)
+{
+    HAL_SD_ReadBlocks(&hsd, read_buf, p1, p2, 100000);
 }
 /* USER CODE END 4 */
 
