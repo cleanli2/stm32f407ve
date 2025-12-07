@@ -361,6 +361,24 @@ int dma_uart_recved()
     }
     return ret;
 }
+void show_sdinfo()
+{
+    uint64_t sdcapa;
+    HAL_SD_CardInfoTypeDef CardInfo;
+    HAL_SD_GetCardInfo(&hsd, &CardInfo);
+    prt_dec(CardInfo.CardType    );
+    prt_dec(CardInfo.CardVersion );
+    prt_dec(CardInfo.Class       );
+    prt_dec(CardInfo.RelCardAdd  );
+    prt_dec(CardInfo.BlockNbr    );
+    prt_dec(CardInfo.BlockSize   );
+    prt_dec(CardInfo.LogBlockNbr );
+    prt_dec(CardInfo.LogBlockSize);
+    sdcapa=(uint64_t)CardInfo.BlockNbr*CardInfo.BlockSize;
+    lprintf("sd capacity is %d(%d) Gbytes\r\n",
+            (uint32_t)(sdcapa/1024/1024/1024),
+            (uint32_t)(sdcapa/1000000000));
+}
 /* USER CODE END 4 */
 
 /**
@@ -372,9 +390,9 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  logline;
   while (1)
   {
-      logline;
   }
   /* USER CODE END Error_Handler_Debug */
 }

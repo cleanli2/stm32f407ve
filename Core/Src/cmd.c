@@ -99,6 +99,7 @@ void history(char *p)
 
 void start_dma_uart_recv();
 int dma_uart_recved();
+void show_sdinfo();
 //extern char*duf;
 extern char duf[];
 void test(char*p)
@@ -130,6 +131,10 @@ void test(char*p)
                 mem_print(duf, (uint32_t)duf, 20);
             }
         }
+    }
+    else if(para==2){
+        lprintf("sd card info\r\n");
+        show_sdinfo();
     }
 }
 static const struct command cmd_list[]=
