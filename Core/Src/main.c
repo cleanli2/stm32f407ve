@@ -237,6 +237,7 @@ static void MX_SDIO_SD_Init(void)
       lprintf("SD config wide BUS OK\r\n");
   }
   /* USER CODE BEGIN SDIO_Init 2 */
+  prt_hex(HAL_SD_GetCardState(&hsd));
 
   /* USER CODE END SDIO_Init 2 */
 
@@ -381,7 +382,11 @@ void show_sdinfo()
 }
 void sd_read(uint8_t*read_buf, uint32_t p1, uint32_t p2)
 {
-    HAL_SD_ReadBlocks(&hsd, read_buf, p1, p2, 100000);
+    HAL_StatusTypeDef ret;
+    prt_hex(HAL_SD_GetCardState(&hsd));
+    ret=HAL_SD_ReadBlocks(&hsd, read_buf, p1, p2, 100000);
+    prt_hex(ret);
+    prt_hex(HAL_SD_GetCardState(&hsd));
 }
 /* USER CODE END 4 */
 

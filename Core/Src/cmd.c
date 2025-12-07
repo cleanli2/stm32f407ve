@@ -150,9 +150,7 @@ void test(char*p)
         }
         prt_dec(p1);
         prt_dec(p2);
-        prt_hex(HAL_SD_GetCardState(&hsd));
         sd_read(read_buf, p1, p2);
-        prt_hex(HAL_SD_GetCardState(&hsd));
         mem_print((char*)read_buf, (uint32_t)0, 512);
     }
 }
