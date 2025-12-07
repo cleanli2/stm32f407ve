@@ -390,14 +390,14 @@ void show_sdinfo()
 }
 void sd_read(uint8_t*read_buf, uint32_t p1, uint32_t p2)
 {
-    uint32_t ct=sd_rx_cnt;
+    uint32_t ct=sd_rx_cnt, wct=0;
     HAL_StatusTypeDef ret;
     prt_hex(HAL_SD_GetCardState(&hsd));
     ret=HAL_SD_ReadBlocks_DMA(&hsd, read_buf, p1, p2);
     prt_hex(ret);
     lprintf("waiting sd rx done\r\n");
-    while(ct==sd_rx_cnt);
-    lprintf("sd rx done\r\n");
+    while(ct==sd_rx_cnt)wct++;
+    lprintf("sd rx done wct=%d\r\n", wct);
 }
 /* USER CODE END 4 */
 
