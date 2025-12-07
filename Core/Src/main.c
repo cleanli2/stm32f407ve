@@ -129,6 +129,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART2_UART_Init();
+  lprintf("uart2 ready\r\n");
   MX_SDIO_SD_Init();
   /* USER CODE BEGIN 2 */
 
@@ -222,6 +223,7 @@ static void MX_SDIO_SD_Init(void)
   hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
   hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
   hsd.Init.ClockDiv = 0;
+  lprintf("trying init sd\r\n");
   if (HAL_SD_Init(&hsd) != HAL_OK)
   {
     Error_Handler();
@@ -229,6 +231,7 @@ static void MX_SDIO_SD_Init(void)
   else{
       lprintf("SD init OK\r\n");
   }
+  prt_hex(HAL_SD_GetCardState(&hsd));
   if (HAL_SD_ConfigWideBusOperation(&hsd, SDIO_BUS_WIDE_4B) != HAL_OK)
   {
     Error_Handler();
@@ -362,6 +365,11 @@ int dma_uart_recved()
     }
     return ret;
 }
+uint32_t sd_rx_cnt=0;
+void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd)
+{
+    sd_rx_cnt++;
+}
 void show_sdinfo()
 {
     uint64_t sdcapa;
@@ -382,11 +390,14 @@ void show_sdinfo()
 }
 void sd_read(uint8_t*read_buf, uint32_t p1, uint32_t p2)
 {
+    uint32_t ct=sd_rx_cnt;
     HAL_StatusTypeDef ret;
     prt_hex(HAL_SD_GetCardState(&hsd));
-    ret=HAL_SD_ReadBlocks(&hsd, read_buf, p1, p2, 100000);
+    ret=HAL_SD_ReadBlocks_DMA(&hsd, read_buf, p1, p2);
     prt_hex(ret);
-    prt_hex(HAL_SD_GetCardState(&hsd));
+    lprintf("waiting sd rx done\r\n");
+    while(ct==sd_rx_cnt);
+    lprintf("sd rx done\r\n");
 }
 /* USER CODE END 4 */
 
