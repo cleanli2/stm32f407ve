@@ -303,10 +303,12 @@ __weak uint8_t BSP_SD_IsDetected(void)
 {
   __IO uint8_t status = SD_PRESENT;
 
+#if 0
   if (BSP_PlatformIsDetected() == 0x0)
   {
     status = SD_NOT_PRESENT;
   }
+#endif
 
   return status;
 }

@@ -15,6 +15,7 @@
   *
   ******************************************************************************
   */
+#include "lprintf.h"
 /* USER CODE END Header */
 #include "fatfs.h"
 
@@ -34,6 +35,8 @@ void MX_FATFS_Init(void)
 
   /* USER CODE BEGIN Init */
   /* additional user code for init */
+  prt_hex(retSD);
+  lprintf("SDPath='%s'\r\n", SDPath);
   /* USER CODE END Init */
 }
 
