@@ -17,6 +17,9 @@ INC_FLAGS= \
 		   -I $(TOP)/Drivers/STM32F4xx_HAL_Driver/Inc\
 		   -I $(TOP)/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy\
 		   -I $(TOP)/Drivers/CMSIS/Device/ST/STM32F4xx/Include\
+		   -I $(TOP)/FATFS/Target\
+		   -I $(TOP)/FATFS/App\
+		   -I $(TOP)/Middlewares/Third_Party/FatFs/src\
 		   -I $(TOP)/Drivers/CMSIS/Include
 
 SFLAGS = -mcpu=cortex-m4 -g3 -DDEBUG -x assembler-with-cpp --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb

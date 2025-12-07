@@ -357,10 +357,12 @@ int dma_uart_recved()
     return ret;
 }
 uint32_t sd_rx_cnt=0;
+#if 0
 void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd)
 {
     sd_rx_cnt++;
 }
+#endif
 void show_sdinfo()
 {
     uint64_t sdcapa;
