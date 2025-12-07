@@ -54,11 +54,14 @@ DWORD get_fattime(void)
 
 /* USER CODE BEGIN Application */
 uint8_t rtext[100];
-void fs_test()
+void fs_test(const char*s)
 {
   FRESULT res;                                          /* FatFs function common result code */
   uint32_t byteswritten, bytesread;                     /* File write/read counts */
-  uint8_t wtext[] = "This is STM32 working with FatFs"; /* File write buffer */
+  uint8_t ws[] = "This is STM32 working with FatFs"; /* File write buffer */
+  const uint8_t *wtext=ws;
+
+  if(s)wtext=(const uint8_t*)s;
 
   /*##-1- Link the micro SD disk I/O driver ##################################*/
   //if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0) //alreadydone in init

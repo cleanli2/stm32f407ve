@@ -104,7 +104,7 @@ void sd_read(uint8_t*read_buf, uint p1, uint p2);
 //extern char*duf;
 extern char duf[];
 extern SD_HandleTypeDef hsd;
-void fs_test();
+void fs_test(const char*text);
 void test(char*p)
 {
     (void)p;
@@ -155,8 +155,16 @@ void test(char*p)
         mem_print((char*)read_buf, (uint32_t)0, 512);
     }
     else if(para==4){
+        char*ps=0;
         lprintf("fs test\r\n");
-        fs_test();
+        if(np >= 2){
+            p=str_to_str(p, &ps);
+        }
+        prt_hex(ps);
+        if(ps){
+            lprintf("ps=%s\r\n", ps);
+        }
+        fs_test(ps);
     }
 }
 static const struct command cmd_list[]=
