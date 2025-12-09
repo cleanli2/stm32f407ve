@@ -104,6 +104,7 @@ void sd_read(uint8_t*read_buf, uint p1, uint p2);
 //extern char*duf;
 extern char duf[];
 extern SD_HandleTypeDef hsd;
+extern I2C_HandleTypeDef hi2c2;
 void fs_test(const char*text);
 void test(char*p)
 {
@@ -165,6 +166,19 @@ void test(char*p)
             lprintf("ps=%s\r\n", ps);
         }
         fs_test(ps);
+    }
+    else if(para==5){
+        lprintf("i2c test\r\n");
+        uint p1=0x20, p2=0x5a;
+        uint8_t d;
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        if(np >= 3){
+            p=str_to_hex(p, &p2);
+        }
+        d=p2;
+        HAL_I2C_Master_Transmit(&hi2c2, p1, &d, 1, 1000000);
     }
 }
 static const struct command cmd_list[]=
