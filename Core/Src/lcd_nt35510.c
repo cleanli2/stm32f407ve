@@ -316,7 +316,7 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 ******************************************************************************/	
 void LCD_Clear(u16 Color)
 {
-  unsigned int i; 
+  register unsigned int i; 
   u32 lcd_clear_ms=HAL_GetTick();
 	u32 total_point=lcddev.width*lcddev.height;
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);   
