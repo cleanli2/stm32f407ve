@@ -945,7 +945,7 @@ Init:
 		goto Init;
 	}
 	#endif
-  LCD_direction(USE_HORIZONTAL);//设置LCD显示方向
+  LCD_direction(1);//设置LCD显示方向
 	LCD_LED=1;//点亮背光	 
 	LCD_Clear(WHITE);//清全屏白色
 }

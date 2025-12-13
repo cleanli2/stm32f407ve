@@ -4,6 +4,7 @@
 #include <string.h>
 #include "stm32f4xx_hal.h"
 #include "fatfs.h"
+#include "lcd_nt35510.h"
 
 #define uint uint32_t
 #define lprint lprintf
@@ -210,22 +211,27 @@ void test(char*p)
         }
         if(f_open(&MyFile, fnm, FA_READ) == FR_OK){
             lprintf("open OK\r\n");
-            //while(1){
+            LCD_SetWindows(0,0,639,479);   
+            while(!f_eof(&MyFile)){
               res = f_read(&MyFile, read_buf, sizeof(read_buf), (UINT*)&bytesread);
-              prt_hex(bytesread);
-              prt_hex(res);
+              //prt_hex(bytesread);
+              //prt_hex(res);
 
               if((bytesread == 0) || (res != FR_OK))
               {
                 logline;
-                //break;
+                break;
               }
               else
               {
-                mem_print((char*)read_buf, 0, sizeof(read_buf));
+                //mem_print((char*)read_buf, 0, sizeof(read_buf));
+                u16*dp16=(u16*)read_buf;
+                for(int ti=0;ti<bytesread/2;ti++){
+                    Lcd_WriteData_16Bit(*dp16++);
+                }
 
               }
-            //}
+            }
             /*##-9- Close the open text file #############################*/
             f_close(&MyFile);
         }
