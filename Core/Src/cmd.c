@@ -28,6 +28,8 @@ extern const uint8_t ziku12[];
 extern const uint8_t ziku[];
 uint32_t get_ziku12_size();
 uint32_t get_ziku_size();
+void write_mem16(char *p);
+void read_mem16(char *p);
 
 char* lstrncpy(char*d, const char*s, unsigned int n)
 {
@@ -186,6 +188,8 @@ static const struct command cmd_list[]=
     {"exit",cmd_exit},
     {"help",print_help},
     {"history",history},
+    {"hr",read_mem16},
+    {"hw",write_mem16},
     {"pm", print_mem},
     {"r",read_mem},
     {"reboot",reboot},
@@ -287,6 +291,52 @@ print:
 
 error:
     lprint("Err!\r\npm [length]\r\n");
+
+}
+
+void write_mem16(char *p)
+{
+    uint value, tmp;
+
+    tmp = get_howmany_para(p);
+    if(tmp == 0 || tmp > 2)
+	goto error;
+    p = str_to_hex(p, &value);
+    if(tmp == 1)
+        goto write;
+    str_to_hex(p, (uint32_t*)&mrw_addr);
+    mrw_addr = (uint32_t*)((uint32_t)mrw_addr & 0xfffffffe);
+    value&=0xffff;
+write:
+    *(uint16_t*)mrw_addr = value;
+    lprint("Write 0x%x@0x%x\r\n",value,mrw_addr);
+    return;
+
+error:
+    lprint("Err!\r\nw v [addr]\r\n");
+
+}
+
+
+void read_mem16(char *p)
+{
+    uint value, tmp;
+
+    tmp = get_howmany_para(p);
+    if( tmp > 1)
+	goto error;
+    if(tmp == 0)
+    	goto read;
+    str_to_hex(p, (uint32_t*)&mrw_addr);
+    mrw_addr = (uint32_t*)((uint32_t)mrw_addr & 0xfffffffe);
+read:
+    value = *(uint16_t*)mrw_addr;
+    lprint("Read 0x%x at memory 0x%x\r\n",value,mrw_addr);
+
+    return;
+
+error:
+    lprint("Err!\r\nr addr\r\n");
 
 }
 
