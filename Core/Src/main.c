@@ -162,7 +162,10 @@ int main(void)
     logline;
   }
   prt_dec(HAL_RCC_GetHCLKFreq());
-  prt_dec(LCD_Read_ID());
+  if(0x5510==LCD_Read_ID()){
+      lprintf("detect lcd controller:nt35510, init lcd\r\n");
+      LCD_Init();
+  }
   run_cmd_interface();
   while(1);
   /* USER CODE END 3 */
