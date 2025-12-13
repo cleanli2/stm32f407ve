@@ -33,6 +33,7 @@ uint32_t get_ziku12_size();
 uint32_t get_ziku_size();
 void write_mem16(char *p);
 void read_mem16(char *p);
+void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye);
 
 char* lstrncpy(char*d, const char*s, unsigned int n)
 {
@@ -206,10 +207,18 @@ void test(char*p)
         if(np >= 2){
             p=str_to_hex(p, &p1);
         }
-        lprintf("pic show %d\r\n", p1);
+
+        while(1){//-------------------------------------------------------------------------
+
+#define BBN 5
+#define MIN_YUV_FILES_NUM NPERBB*BBN
 #define NPERBB 10000
 #define GET_FILE_PATH_AND_NAME(buf, n) \
         slprintf(buf, "BB%d/V%d/YUV%d.BIN", n/NPERBB, (n%NPERBB)/100, n%NPERBB);
+        if(p1>MIN_YUV_FILES_NUM-1){
+            p1-= MIN_YUV_FILES_NUM;
+        }
+        lprintf("pic show %d\r\n", p1);
         GET_FILE_PATH_AND_NAME(fnm, p1);
         lprintf("fnm=%s\r\n", fnm);
         prt_hex(sizeof(read_buf));
@@ -220,6 +229,10 @@ void test(char*p)
         if(f_open(&MyFile, fnm, FA_READ) == FR_OK){
             lprintf("open OK\r\n");
             u32 pic_ms=HAL_GetTick();
+            lcd_clr_window(WHITE, 0, 0, 5, 479);
+            lcd_clr_window(BLACK, 6, 0, 10, 479);
+            lcd_clr_window(WHITE, 635, 0, 639, 479);
+            lcd_clr_window(BLACK, 631, 0, 634, 479);
             LCD_SetWindows(0,0,639,479);   
             while(!f_eof(&MyFile)){
               res = f_read(&MyFile, read_buf, sizeof(read_buf), (UINT*)&bytesread);
@@ -248,6 +261,10 @@ void test(char*p)
         else{
             logline;
         }
+        p1++;
+
+        }//-------------------------------------------------------------------------
+
     }
 }
 static const struct command cmd_list[]=

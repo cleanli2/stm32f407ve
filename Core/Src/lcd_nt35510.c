@@ -974,6 +974,15 @@ void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd)
 	LCD_WriteRAM_Prepare();	//¿ªÊ¼Ð´ÈëGRAM			
 }   
 
+void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
+{
+	register u32 total_point=((unsigned int)xe-xs+1)*(ye-ys+1);
+	LCD_SetWindows(xs,ys,xe,ye);   
+	for(u32 i=0;i<total_point;i++)
+	{ 
+		LCD->LCD_RAM = color;
+	}
+}
 /*****************************************************************************
  * @name       :void LCD_SetCursor(u16 Xpos, u16 Ypos)
  * @date       :2018-08-09 
