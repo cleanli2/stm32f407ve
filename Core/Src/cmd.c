@@ -219,6 +219,7 @@ void test(char*p)
         }
         if(f_open(&MyFile, fnm, FA_READ) == FR_OK){
             lprintf("open OK\r\n");
+            u32 pic_ms=HAL_GetTick();
             LCD_SetWindows(0,0,639,479);   
             while(!f_eof(&MyFile)){
               res = f_read(&MyFile, read_buf, sizeof(read_buf), (UINT*)&bytesread);
@@ -239,6 +240,8 @@ void test(char*p)
 
               }
             }
+            pic_ms=HAL_GetTick()-pic_ms;
+            prt_dec(pic_ms);
             /*##-9- Close the open text file #############################*/
             f_close(&MyFile);
         }
