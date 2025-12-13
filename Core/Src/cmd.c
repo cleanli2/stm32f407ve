@@ -3,10 +3,12 @@
 #include <stdint.h>
 #include <string.h>
 #include "stm32f4xx_hal.h"
+#include "fatfs.h"
 
 #define uint uint32_t
 #define lprint lprintf
 
+extern int g_fmounted;
 static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
 static uint quit_cmd = 0;
@@ -181,6 +183,55 @@ void test(char*p)
         }
         d=p2;
         HAL_I2C_Master_Transmit(&hi2c2, p1, &d, 1, 1000000);
+    }
+    else if(para==6){
+        FRESULT res; /* FatFs function common result code */
+        char fnm[32];
+        FIL MyFile; /* File object for SD */
+        if(!g_fmounted){
+            logline;
+            return;
+        }
+        uint p1=100;
+        uint32_t bytesread; /* File write/read counts */
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        lprintf("pic show %d\r\n", p1);
+#define NPERBB 10000
+#define GET_FILE_PATH_AND_NAME(buf, n) \
+        slprintf(buf, "BB%d/V%d/YUV%d.BIN", n/NPERBB, (n%NPERBB)/100, n%NPERBB);
+        GET_FILE_PATH_AND_NAME(fnm, p1);
+        lprintf("fnm=%s\r\n", fnm);
+        prt_hex(sizeof(read_buf));
+        FILINFO myfno;
+        if(f_stat(fnm, &myfno) == FR_OK){
+            prt_dec(myfno.fsize);
+        }
+        if(f_open(&MyFile, fnm, FA_READ) == FR_OK){
+            lprintf("open OK\r\n");
+            //while(1){
+              res = f_read(&MyFile, read_buf, sizeof(read_buf), (UINT*)&bytesread);
+              prt_hex(bytesread);
+              prt_hex(res);
+
+              if((bytesread == 0) || (res != FR_OK))
+              {
+                logline;
+                //break;
+              }
+              else
+              {
+                mem_print((char*)read_buf, 0, sizeof(read_buf));
+
+              }
+            //}
+            /*##-9- Close the open text file #############################*/
+            f_close(&MyFile);
+        }
+        else{
+            logline;
+        }
     }
 }
 static const struct command cmd_list[]=

@@ -23,6 +23,7 @@ uint8_t retSD;    /* Return value for SD */
 char SDPath[4];   /* SD logical drive path */
 FATFS SDFatFS;    /* File system object for SD logical drive */
 FIL MyFile;       /* File object for SD */
+int g_fmounted=0;
 
 /* USER CODE BEGIN Variables */
 
@@ -37,6 +38,15 @@ void MX_FATFS_Init(void)
   /* additional user code for init */
   prt_hex(retSD);
   lprintf("SDPath='%s'\r\n", SDPath);
+  if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
+  {
+      /* FatFs Initialization Error */
+      logline;
+      Error_Handler();
+  }
+  else{
+      g_fmounted=1;
+  }
   /* USER CODE END Init */
 }
 
@@ -67,14 +77,7 @@ void fs_test(const char*s)
   //if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0) //alreadydone in init
   {
     /*##-2- Register the file system object to the FatFs module ##############*/
-    if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
-    {
-      /* FatFs Initialization Error */
-      logline;
-      Error_Handler();
-    }
-    else
-    {
+    if(g_fmounted){
       /*##-3- Create a FAT file system (format) on the logical drive #########*/
       /* WARNING: Formatting the uSD card will delete all content on the device */
 #if 0
