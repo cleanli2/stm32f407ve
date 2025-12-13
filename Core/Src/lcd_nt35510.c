@@ -69,6 +69,8 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *************************************************************************************/		
 #include "lcd_nt35510.h"
+#include "lprintf.h"
+#include "stm32f4xx_hal.h"
 
 	   
 //管理LCD重要参数
@@ -315,6 +317,7 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 void LCD_Clear(u16 Color)
 {
   unsigned int i; 
+  u32 lcd_clear_ms=HAL_GetTick();
 	u32 total_point=lcddev.width*lcddev.height;
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);   
 	for(i=0;i<total_point;i++)
@@ -326,6 +329,8 @@ void LCD_Clear(u16 Color)
 		LCD->LCD_RAM = Color;
 #endif
 	}
+    lcd_clear_ms=HAL_GetTick()-lcd_clear_ms;
+    prt_dec(lcd_clear_ms);
 } 
 
 /*****************************************************************************
