@@ -185,6 +185,14 @@ void test(char*p)
         d=p2;
         HAL_I2C_Master_Transmit(&hi2c2, p1, &d, 1, 1000000);
     }
+    else if(para==7){
+        lprintf("lcd clear test\r\n");
+        uint p1=0xFFFF;
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        LCD_Clear(p1);
+    }
     else if(para==6){
         FRESULT res; /* FatFs function common result code */
         char fnm[32];
