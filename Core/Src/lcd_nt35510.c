@@ -68,9 +68,7 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *************************************************************************************/		
-#include "lcd.h"
-#include "stdlib.h"
-#include "delay.h"	 
+#include "lcd_nt35510.h"
 
 	   
 //管理LCD重要参数
@@ -80,6 +78,21 @@ _lcd_dev lcddev;
 //画笔颜色,背景颜色
 u16 POINT_COLOR = 0x0000,BACK_COLOR = 0xFFFF;  
 u16 DeviceCode;	 
+
+#define US_CT 80
+void delay_us(int t)
+{
+    while(t--){
+        volatile int tn=US_CT;
+        while(tn--);
+    }
+}
+void delay_ms(int t)
+{
+    while(t--){
+        delay_us(1000);
+    }
+}
 
 
 u16 LCD_read(void)
@@ -324,6 +337,7 @@ void LCD_Clear(u16 Color)
 ******************************************************************************/	
 void LCD_GPIOInit(void)
 {
+#if 0
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
   FSMC_NORSRAMTimingInitTypeDef  readWriteTiming; 
@@ -440,6 +454,7 @@ void LCD_GPIOInit(void)
 	FSMC_Bank1E->BWTR[0]&=~(0XF<<8);//数据保存时间清零
 	FSMC_Bank1E->BWTR[0]|=3<<0;		//地址建立时间(ADDSET)为4个HCLK =24ns  	 
 	FSMC_Bank1E->BWTR[0]|=2<<8; 	//数据保存时间(DATAST)为6ns*4个HCLK=24ns
+#endif
 }
 
 /*****************************************************************************
@@ -451,10 +466,12 @@ void LCD_GPIOInit(void)
 ******************************************************************************/	
 void LCD_RESET(void)
 {
+#if 0
 	LCD_RST=0;
 	delay_ms(100);	
 	LCD_RST=1;
 	delay_ms(50);
+#endif
 }
 
 /*****************************************************************************

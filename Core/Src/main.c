@@ -23,6 +23,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "fatfs.h"
+#include "lcd_nt35510.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -161,6 +162,7 @@ int main(void)
     logline;
   }
   prt_dec(HAL_RCC_GetHCLKFreq());
+  prt_dec(LCD_Read_ID());
   run_cmd_interface();
   while(1);
   /* USER CODE END 3 */
