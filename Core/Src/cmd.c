@@ -233,9 +233,8 @@ void test(char*p)
               else
               {
                 //mem_print((char*)read_buf, 0, sizeof(read_buf));
-                u16*dp16=(u16*)read_buf;
-                for(int ti=0;ti<bytesread/2;ti++){
-                    Lcd_WriteData_16Bit(*dp16++);
+                for(int ti=0;ti<bytesread;ti+=2){
+                    Lcd_WriteData_16Bit((read_buf[ti]<<8)|read_buf[ti+1]);
                 }
 
               }
