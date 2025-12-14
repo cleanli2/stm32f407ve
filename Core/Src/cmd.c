@@ -22,7 +22,7 @@ uint32_t ci=0;
 uint8_t cmd_caches[CMD_CACHES_SIZE][COM_MAX_LEN] = {0};
 uint32_t cmdcache_index=0;
 uint32_t review_cmd_his_index;
-uint8_t read_buf[512];
+uint8_t read_buf[512*16];
 
 extern const uint8_t ziku12[];
 extern const uint8_t ziku[];

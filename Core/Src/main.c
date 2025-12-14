@@ -395,9 +395,9 @@ void sd_read(uint8_t*read_buf, uint32_t p1, uint32_t p2)
     while(p2--){
         while(HAL_SD_CARD_TRANSFER!=HAL_SD_GetCardState(&hsd));
         ct=sd_rx_cnt;
-        HAL_SD_ReadBlocks_DMA(&hsd, read_buf, p1, 1);
+        HAL_SD_ReadBlocks_DMA(&hsd, read_buf, p1, 16);
         while(ct==sd_rx_cnt);
-        p1++;
+        p1+=16;
     }
     prt_dec(HAL_GetTick()-wct);
 }
