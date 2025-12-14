@@ -246,11 +246,15 @@ void test(char*p)
               }
               else
               {
+#if 0
                 //mem_print((char*)read_buf, 0, sizeof(read_buf));
                 for(int ti=0;ti<bytesread;ti+=2){
                     Lcd_WriteData_16Bit((read_buf[ti]<<8)|read_buf[ti+1]);
                 }
-
+#else
+                void rgb565_to_lcd(u8*buf, u32 len);
+                rgb565_to_lcd(read_buf, bytesread);
+#endif
               }
             }
             pic_ms=HAL_GetTick()-pic_ms;
