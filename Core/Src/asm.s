@@ -1,6 +1,7 @@
 .text 
 
 .global rgb565_to_lcd
+.global color16_lcd
 .code 16
 .syntax unified
 
@@ -29,6 +30,29 @@ cmp r1, #0
 bne.n compute_color
 
 pop {r2-r4}
+bx lr
+
+/***************************************************/
+.type color16_lcd, function
+color16_lcd:
+push {r2}
+
+/*r0=color, r1=lens*/
+/*r2=lcd ram addr*/
+
+ldr r2, =0x60020000
+and r1, r1, #0xfffffffe;
+
+write_color:
+/*bl lcd_w16*/
+strh r0, [r2]
+
+/*len--*/
+subs r1, r1, #1
+cmp r1, #0
+bne.n write_color
+
+pop {r2}
 bx lr
 
 /***************************************************/

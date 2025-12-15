@@ -73,6 +73,7 @@
 #include "stm32f4xx_hal.h"
 
 	   
+void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye);
 //管理LCD重要参数
 //默认为竖屏
 _lcd_dev lcddev;
@@ -316,8 +317,8 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 ******************************************************************************/	
 void LCD_Clear(u16 Color)
 {
-  register unsigned int i; 
   u32 lcd_clear_ms=HAL_GetTick();
+#if 0
 	u32 total_point=lcddev.width*lcddev.height;
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);   
 	for(i=0;i<total_point;i++)
@@ -329,6 +330,8 @@ void LCD_Clear(u16 Color)
 		LCD->LCD_RAM = Color;
 #endif
 	}
+#endif
+	lcd_clr_window(Color, 0,0,lcddev.width-1,lcddev.height-1);
     lcd_clear_ms=HAL_GetTick()-lcd_clear_ms;
     prt_dec(lcd_clear_ms);
 } 
@@ -974,14 +977,17 @@ void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd)
 	LCD_WriteRAM_Prepare();	//开始写入GRAM			
 }   
 
+void color16_lcd(u16 color, u32 n);
 void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
 {
-	register u32 total_point=((unsigned int)xe-xs+1)*(ye-ys+1);
 	LCD_SetWindows(xs,ys,xe,ye);   
+    color16_lcd(color, ((unsigned int)xe-xs+1)*(ye-ys+1));
+#if 0
 	for(u32 i=0;i<total_point;i++)
 	{ 
 		LCD->LCD_RAM = color;
 	}
+#endif
 }
 /*****************************************************************************
  * @name       :void LCD_SetCursor(u16 Xpos, u16 Ypos)
