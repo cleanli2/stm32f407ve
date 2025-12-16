@@ -184,7 +184,8 @@ void test(char*p)
             p=str_to_hex(p, &p2);
         }
         d=p2;
-        HAL_I2C_Master_Transmit(&hi2c2, p1, &d, 1, 1000000);
+        HAL_StatusTypeDef ret=HAL_I2C_Master_Transmit(&hi2c2, p1, &d, 1, 1000000);
+        prt_hex(ret);
     }
     else if(para==7){
         lprintf("lcd clear test\r\n");
