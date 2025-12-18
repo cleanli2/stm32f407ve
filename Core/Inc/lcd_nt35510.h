@@ -72,6 +72,7 @@
 #define __LCD_H		
 
 #include "stm32f407xx.h"
+#include "stm32f4xx_hal.h"
 
 /************************************************************/
 //位带操作,实现51类似的GPIO控制功能
@@ -170,7 +171,9 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 #define RST  13        //复位引脚                  PD13
 
 //QDtech全系列模块采用了三极管控制背光亮灭，用户也可以接PWM调节背光亮度
-#define	LCD_LED PBout(LED) //LCD背光    		 
+//#define	LCD_LED PBout(LED) //LCD背光    		 
+extern TIM_HandleTypeDef htim12;
+#define	LCD_LED_ON HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2)
 #define LCD_RST PDout(RST) //复位引脚              PD13
 
 //LCD地址结构体

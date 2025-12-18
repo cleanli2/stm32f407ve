@@ -949,7 +949,8 @@ Init:
 	}
 	#endif
   LCD_direction(1);//设置LCD显示方向
-	LCD_LED=1;//点亮背光	 
+
+	LCD_LED_ON;//点亮背光	 
 	LCD_Clear(WHITE);//清全屏白色
 }
  
