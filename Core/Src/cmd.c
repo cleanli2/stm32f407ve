@@ -201,8 +201,8 @@ void test(char*p)
         if(np >= 2){
             p=str_to_hex(p, &p1);
         }
-        extern TIM_HandleTypeDef htim1;
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, p1&0xffff);
+        extern TIM_HandleTypeDef htim12;
+        __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, p1&0xffff);
     }
     else if(para==6){
         FRESULT res; /* FatFs function common result code */
