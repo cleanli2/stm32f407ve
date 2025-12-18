@@ -151,6 +151,16 @@ int main(void)
   MX_I2C2_Init();
   MX_DCMI_Init();
   MX_TIM1_Init();
+  if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4) != HAL_OK)
+  {
+    /* PWM Generation Error */
+    lprintf("pwm on PA11 fail\r\n");
+    Error_Handler();
+  }
+  else{
+    lprintf("pwm on PA11 start OK\r\n");
+  }
+
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
