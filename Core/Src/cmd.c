@@ -195,6 +195,15 @@ void test(char*p)
         }
         LCD_Clear(p1);
     }
+    else if(para==8){
+        lprintf("lcd set bak\r\n");
+        uint p1=1000;
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        extern TIM_HandleTypeDef htim1;
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, p1&0xffff);
+    }
     else if(para==6){
         FRESULT res; /* FatFs function common result code */
         char fnm[32];
