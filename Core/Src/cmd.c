@@ -113,7 +113,6 @@ extern char duf[];
 extern SD_HandleTypeDef hsd;
 extern I2C_HandleTypeDef hi2c2;
 void fs_test(const char*text);
-int g_camic=0;
 void test(char*p)
 {
     (void)p;
@@ -296,8 +295,10 @@ void test(char*p)
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
-        prt_hex(&cam_dma_err);
-        prt_hex(&g_camic);
+        prt_dec(cam_dma_err);
+        prt_dec(cam_linect);
+        prt_dec(cam_vsct);
+        prt_dec(cam_fmct);
         LCD_SetWindows(0,0,639,479);
         rgb565_to_lcd((u8*)0x20004000, p1);
     }

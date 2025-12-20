@@ -5,6 +5,9 @@
 extern I2C_HandleTypeDef hi2c2;
 
 int cam_dma_err=0;
+int cam_linect=0;
+int cam_vsct=0;
+int cam_fmct=0;
 
 uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
@@ -1021,4 +1024,45 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi)
             the HAL_DCMI_ErrorCallback could be implemented in the user file
    */
   cam_dma_err=1;
+}
+void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hdcmi);
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the HAL_DCMI_LineEventCallback could be implemented in the user file
+   */
+  cam_linect++;
+}
+
+/**
+  * @brief  VSYNC Event callback.
+  * @param  hdcmi pointer to a DCMI_HandleTypeDef structure that contains
+  *                the configuration information for DCMI.
+  * @retval None
+  */
+__weak void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hdcmi);
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the HAL_DCMI_VsyncEventCallback could be implemented in the user file
+   */
+  cam_vsct++;
+}
+
+/**
+  * @brief  Frame Event callback.
+  * @param  hdcmi pointer to a DCMI_HandleTypeDef structure that contains
+  *                the configuration information for DCMI.
+  * @retval None
+  */
+__weak void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hdcmi);
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the HAL_DCMI_FrameEventCallback could be implemented in the user file
+   */
+  cam_fmct++;
 }
