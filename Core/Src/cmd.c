@@ -284,8 +284,11 @@ void test(char*p)
     else if(para==9){
         lprintf("cam test\r\n");
         cam_init();
+        lprintf("start cam receive\r\n");
         //0x20004000 -> (320x240=76800)0x12c00 ->0x20016c00
         HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)0x20004000, 320*240);
+        lprintf("start cam receive done\r\n");
+        prt_hex(cam_dma_err);
     }
 }
 static const struct command cmd_list[]=

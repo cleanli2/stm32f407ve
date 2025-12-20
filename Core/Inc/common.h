@@ -12,4 +12,5 @@ void putchars(const char *pt);
 int cam_init(void);
 extern DCMI_HandleTypeDef hdcmi;
 
+extern int cam_dma_err;
 #endif

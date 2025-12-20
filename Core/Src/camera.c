@@ -4,6 +4,7 @@
 #define delay_ms HAL_Delay
 extern I2C_HandleTypeDef hi2c2;
 
+int cam_dma_err=0;
 
 uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
@@ -1019,5 +1020,5 @@ void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi)
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_DCMI_ErrorCallback could be implemented in the user file
    */
-  logline;
+  cam_dma_err=1;
 }
