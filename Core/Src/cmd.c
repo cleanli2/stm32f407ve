@@ -309,6 +309,14 @@ void test(char*p)
         LCD_SetWindows(0,0,639,479);
         rgb565_to_lcd((u8*)0x20004000, 0x1c000);
     }
+    else if(para==0x171){
+        lprintf("set 71 1\r\n");
+        g_cam_r71p_e=1;
+    }
+    else if(para==0x170){
+        lprintf("set 70 1\r\n");
+        g_cam_r70p_e=1;
+    }
 }
 static const struct command cmd_list[]=
 {

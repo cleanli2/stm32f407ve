@@ -15,6 +15,8 @@ void putchars(const char *pt);
 int cam_init(void);
 extern DCMI_HandleTypeDef hdcmi;
 
+extern int g_cam_r70p_e;
+extern int g_cam_r71p_e;
 extern int cam_linect;
 extern int cam_vsct;
 extern int cam_fmct;
