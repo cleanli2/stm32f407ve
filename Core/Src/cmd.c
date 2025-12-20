@@ -292,15 +292,22 @@ void test(char*p)
         }
         lprintf("start cam receive %d\r\n", p1);
         //0x20004000 -> (320x240=76800)0x12c00 ->0x20016c00
+        cam_dma_err=0;
+        cam_linect=0;
+        cam_vsct=0;
+        cam_fmct=0;
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
+    }
+    else if(para==0xb){
+        lprintf("check cam receive\r\n");
         prt_dec(cam_dma_err);
         prt_dec(cam_linect);
         prt_dec(cam_vsct);
         prt_dec(cam_fmct);
         LCD_SetWindows(0,0,639,479);
-        rgb565_to_lcd((u8*)0x20004000, p1);
+        rgb565_to_lcd((u8*)0x20004000, 0x1c000);
     }
 }
 static const struct command cmd_list[]=
