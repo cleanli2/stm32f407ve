@@ -944,7 +944,7 @@ uint8_t cam_r_reg(uint8_t addr)
     return ret;
 }
 int g_cam_r70p_e = 0;
-int g_cam_r71p_e = 0;
+int g_cam_r71p_e = 1;
 int cam_init()
 {
     int rcam_rty=9;
