@@ -113,6 +113,7 @@ extern char duf[];
 extern SD_HandleTypeDef hsd;
 extern I2C_HandleTypeDef hi2c2;
 void fs_test(const char*text);
+int g_camic=0;
 void test(char*p)
 {
     (void)p;
@@ -291,6 +292,7 @@ void test(char*p)
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
         prt_hex(cam_dma_err);
+        prt_hex(&g_camic);
     }
 }
 static const struct command cmd_list[]=
