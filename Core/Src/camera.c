@@ -1011,3 +1011,13 @@ int cam_init()
     lprintf("cam read 0x12=%b\r\n", cam_r_reg(0x12));
     return 0;
 }
+
+void HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hdcmi);
+  /* NOTE : This function Should not be modified, when the callback is needed,
+            the HAL_DCMI_ErrorCallback could be implemented in the user file
+   */
+  logline;
+}
