@@ -264,7 +264,6 @@ void test(char*p)
                     Lcd_WriteData_16Bit((read_buf[ti]<<8)|read_buf[ti+1]);
                 }
 #else
-                void rgb565_to_lcd(u8*buf, u32 len);
                 rgb565_to_lcd(read_buf, bytesread);
 #endif
               }
@@ -288,13 +287,19 @@ void test(char*p)
     }
     else if(para==0xa){
         HAL_StatusTypeDef ret;
-        lprintf("start cam receive\r\n");
+        uint p1=320;
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        lprintf("start cam receive %d\r\n", p1);
         //0x20004000 -> (320x240=76800)0x12c00 ->0x20016c00
-        ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, 320);
+        ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
         prt_hex(&cam_dma_err);
         prt_hex(&g_camic);
+        LCD_SetWindows(0,0,639,479);
+        rgb565_to_lcd((u8*)0x20004000, p1/2);
     }
 }
 static const struct command cmd_list[]=
