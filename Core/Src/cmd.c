@@ -5,6 +5,7 @@
 #include "stm32f4xx_hal.h"
 #include "fatfs.h"
 #include "lcd_nt35510.h"
+#include "common.h"
 
 #define uint uint32_t
 #define lprint lprintf
@@ -279,6 +280,10 @@ void test(char*p)
 
         }//-------------------------------------------------------------------------
 
+    }
+    else if(para==9){
+        lprintf("cam test\r\n");
+        cam_init();
     }
 }
 static const struct command cmd_list[]=
