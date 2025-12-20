@@ -283,15 +283,17 @@ void test(char*p)
 
     }
     else if(para==9){
-        HAL_StatusTypeDef ret;
-        lprintf("cam test\r\n");
+        lprintf("cam init test\r\n");
         cam_init();
+    }
+    else if(para==0xa){
+        HAL_StatusTypeDef ret;
         lprintf("start cam receive\r\n");
         //0x20004000 -> (320x240=76800)0x12c00 ->0x20016c00
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, 320);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
-        prt_hex(cam_dma_err);
+        prt_hex(&cam_dma_err);
         prt_hex(&g_camic);
     }
 }
