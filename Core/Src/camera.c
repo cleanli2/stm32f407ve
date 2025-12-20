@@ -946,7 +946,7 @@ int cam_init()
 {
     int rcam_rty=9;
     uint8_t tmpd=0;
-    int choose=4;
+    int choose=7;
 
 
     delay_ms(20);
