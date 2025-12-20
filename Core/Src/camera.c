@@ -7,47 +7,56 @@ int cam_w_reg(uint8_t addr, uint8_t data)
 {
     uint8_t d[2];
     d[0]=addr;
-    d[0]=data;
+    d[1]=data;
     return HAL_I2C_Master_Transmit(&hi2c2, 0x42, d, 2, 1000000);
 }
 int cam_r_regn(uint8_t addr,uint8_t n,uint8_t * buf)
 {
-    return 0;
+    return HAL_I2C_Master_Receive(&hi2c2, 0x42, buf, n, 1000000);
 }
-void cam_init()
+int camreaderr=0;
+uint8_t cam_r_reg(uint8_t addr)
 {
+    uint8_t ret=0;
+    camreaderr=HAL_I2C_Master_Transmit(&hi2c2, 0x42, &addr, 1, 1000000);
+    if(0!=camreaderr){
+        return 0;
+    }
+    camreaderr=cam_r_regn(addr, 1, &ret);
+    if(camreaderr!=0)lprintf("cam read error\r\n");
+    return ret;
+}
+int cam_init()
 {
     int rcam_rty=9;
-    int clks=100;
+    uint8_t tmpd=0;
 
 
     delay_ms(20);
-    lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
+    lprintf("cam reset return %x\r\n", cam_w_reg(0x12, 0x80));
     delay_ms(20);
 
-#if 0
     //read cam id
     while(1){
-        if(0x76==cam_r_reg(0x0A)){
+        tmpd=cam_r_reg(0x0A);
+        prt_hex(tmpd);
+        prt_hex(camreaderr);
+        if(0x76==tmpd){
+            lprintf("cam ID OK\r\n");
             break;
         }
         else{
             rcam_rty--;
             if(rcam_rty==0){
+                lprintf("cam ID fail\r\n");
                 return -1;
             }
         }
-        lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
         delay_ms(10);
     }
+#if 0
     lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
     lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
-    while(clks--){
-        GPIO_SetBits(AL422_WG,RCK);
-        delay_ms(2);
-        GPIO_ResetBits(AL422_WG,RCK);
-        delay_ms(2);
-    }
     switch(choose){
         case 1:
             lprintf_time("set_OV7670reg\n");
@@ -87,5 +96,5 @@ void cam_init()
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
     return 0;
 #endif
-}
+    return 0;
 }
