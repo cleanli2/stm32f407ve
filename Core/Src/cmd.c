@@ -299,7 +299,7 @@ void test(char*p)
         prt_hex(&cam_dma_err);
         prt_hex(&g_camic);
         LCD_SetWindows(0,0,639,479);
-        rgb565_to_lcd((u8*)0x20004000, p1/2);
+        rgb565_to_lcd((u8*)0x20004000, p1);
     }
 }
 static const struct command cmd_list[]=

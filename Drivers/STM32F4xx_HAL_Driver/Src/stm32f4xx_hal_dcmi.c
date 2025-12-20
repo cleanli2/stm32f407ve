@@ -548,7 +548,6 @@ HAL_StatusTypeDef HAL_DCMI_Resume(DCMI_HandleTypeDef* hdcmi)
   return HAL_OK;
 }
 
-uint32_t isrv[64];
 /**
   * @brief  Handles DCMI interrupt request.
   * @param  hdcmi pointer to a DCMI_HandleTypeDef structure that contains
@@ -558,11 +557,6 @@ uint32_t isrv[64];
 void HAL_DCMI_IRQHandler(DCMI_HandleTypeDef *hdcmi)
 {
   uint32_t isr_value = READ_REG(hdcmi->Instance->MISR);
-  extern int g_camic;
-  if(g_camic<64){
-      isrv[g_camic]=isr_value;
-  }
-  g_camic++;
 
   /* Synchronization error interrupt management *******************************/
   if((isr_value & DCMI_FLAG_ERRRI) == DCMI_FLAG_ERRRI)
