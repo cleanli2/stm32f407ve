@@ -319,6 +319,16 @@ void test(char*p)
         g_cam_r70p_e=1-g_cam_r70p_e;
         prt_dec(g_cam_r70p_e);
     }
+    else if(para==0xdccf){
+        uint p1=0x101;
+        lprintf("dcmi config\r\n");
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        g_dcmi_cfg=p1;
+        prt_hex(g_dcmi_cfg);
+        MX_DCMI_Init();
+    }
 }
 static const struct command cmd_list[]=
 {

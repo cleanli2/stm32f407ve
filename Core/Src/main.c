@@ -64,6 +64,7 @@ DMA_HandleTypeDef hdma_usart2_rx;
 SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
+int g_dcmi_cfg = 0x101;
 
 /* USER CODE END PV */
 
@@ -75,7 +76,6 @@ static void MX_USART2_UART_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_I2C2_Init(void);
-static void MX_DCMI_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM12_Init(void);
 /* USER CODE BEGIN PFP */
@@ -151,7 +151,7 @@ int main(void)
   MX_FATFS_Init();
   MX_FSMC_Init();
   MX_I2C2_Init();
-  MX_DCMI_Init();
+  //MX_DCMI_Init();
   MX_TIM1_Init();
   MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
@@ -244,7 +244,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_DCMI_Init(void)
+void MX_DCMI_Init(void)
 {
 
   /* USER CODE BEGIN DCMI_Init 0 */
@@ -256,12 +256,30 @@ static void MX_DCMI_Init(void)
   /* USER CODE END DCMI_Init 1 */
   hdcmi.Instance = DCMI;
   hdcmi.Init.SynchroMode = DCMI_SYNCHRO_HARDWARE;
-  hdcmi.Init.PCKPolarity = DCMI_PCKPOLARITY_RISING;
-  hdcmi.Init.VSPolarity = DCMI_VSPOLARITY_HIGH;
-  hdcmi.Init.HSPolarity = DCMI_HSPOLARITY_LOW;
+  if(g_dcmi_cfg&0xf){
+      hdcmi.Init.PCKPolarity = DCMI_PCKPOLARITY_RISING;
+  }
+  else{
+      hdcmi.Init.PCKPolarity = DCMI_PCKPOLARITY_FALLING;
+  }
+  if(g_dcmi_cfg&0xf00){
+      hdcmi.Init.VSPolarity = DCMI_VSPOLARITY_HIGH;
+  }
+  else{
+      hdcmi.Init.VSPolarity = DCMI_VSPOLARITY_LOW;
+  }
+  if(g_dcmi_cfg&0xf0){
+      hdcmi.Init.HSPolarity = DCMI_HSPOLARITY_HIGH;
+  }
+  else{
+      hdcmi.Init.HSPolarity = DCMI_HSPOLARITY_LOW;
+  }
   hdcmi.Init.CaptureRate = DCMI_CR_ALL_FRAME;
   hdcmi.Init.ExtendedDataMode = DCMI_EXTEND_DATA_8B;
   hdcmi.Init.JPEGMode = DCMI_JPEG_DISABLE;
+  prt_hex(hdcmi.Init.PCKPolarity);
+  prt_hex(hdcmi.Init.HSPolarity);
+  prt_hex(hdcmi.Init.VSPolarity);
   if (HAL_DCMI_Init(&hdcmi) != HAL_OK)
   {
     Error_Handler();
