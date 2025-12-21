@@ -309,6 +309,19 @@ void test(char*p)
         LCD_SetWindows(0,0,639,479);
         rgb565_to_lcd((u8*)0x20004000, 0x1c000);
     }
+    else if(para==0xb2){
+        int n=0x1c000/2;
+        uint16_t*tp=(uint16_t*)0x20004000;
+        lprintf("check cam receive (2)\r\n");
+        prt_dec(cam_dma_err);
+        prt_dec(cam_linect);
+        prt_dec(cam_vsct);
+        prt_dec(cam_fmct);
+        LCD_SetWindows(0,0,639,479);
+        while(n--){
+			Lcd_WriteData_16Bit(*tp++);
+        }
+    }
     else if(para==0x171){
         lprintf("toggle 71 1\r\n");
         g_cam_r71p_e=1-g_cam_r71p_e;

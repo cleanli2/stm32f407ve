@@ -5,6 +5,7 @@
 #include "stm32f4xx_hal.h"
 
 typedef uint8_t u8;
+typedef uint16_t u16;
 typedef uint32_t u32;
 
 char* lstrncpy(char*d, const char*s, unsigned int n);
@@ -16,6 +17,7 @@ int cam_init(void);
 extern DCMI_HandleTypeDef hdcmi;
 
 void MX_DCMI_Init(void);
+void Lcd_WriteData_16Bit(u16 Data);
 extern int g_dcmi_cfg;
 extern int g_cam_r70p_e;
 extern int g_cam_r71p_e;
