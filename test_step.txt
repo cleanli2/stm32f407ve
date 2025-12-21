@@ -1,0 +1,6 @@
+1 reboot
+2 test dccf //config dcmi
+2. test 171 // toggle test pattern of cam
+3 test 9 //cam init
+4 test a 0x1b000 //start dma recv
+5 test b | b2 | b3 //show on lcd
