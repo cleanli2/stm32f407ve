@@ -10,6 +10,12 @@
 #define uint uint32_t
 #define lprint lprintf
 
+#define BBN 5
+#define MIN_YUV_FILES_NUM NPERBB*BBN
+#define NPERBB 10000
+#define GET_FILE_PATH_AND_NAME(buf, n) \
+        slprintf(buf, "BB%d/V%d/YUV%d.BIN", n/NPERBB, (n%NPERBB)/100, n%NPERBB);
+
 extern int g_fmounted;
 static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
@@ -205,6 +211,54 @@ void test(char*p)
         extern TIM_HandleTypeDef htim12;
         __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, p1&0xffff);
     }
+    else if(para==0x65){
+        FRESULT res; /* FatFs function common result code */
+        char fnm[32];
+        FIL MyFile; /* File object for SD */
+        if(!g_fmounted){
+            logline;
+            return;
+        }
+        uint p1=100;
+        uint32_t bytesread; /* File write/read counts */
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+
+        if(p1>MIN_YUV_FILES_NUM-1){
+            p1-= MIN_YUV_FILES_NUM;
+        }
+        lprintf("one pic show %d with data dump\r\n", p1);
+        GET_FILE_PATH_AND_NAME(fnm, p1);
+        lprintf("fnm=%s\r\n", fnm);
+        FILINFO myfno;
+        if(f_stat(fnm, &myfno) == FR_OK){
+            prt_dec(myfno.fsize);
+        }
+        if(f_open(&MyFile, fnm, FA_READ) == FR_OK){
+            lprintf("open OK\r\n");
+            LCD_SetWindows(0,0,639,479);   
+            res = f_read(&MyFile, (u8*)0x20004000, 0x1b000, (UINT*)&bytesread);
+            //prt_hex(bytesread);
+            //prt_hex(res);
+
+            if((bytesread == 0) || (res != FR_OK))
+            {
+                logline;
+                return;
+            }
+            else
+            {
+                //mem_print((char*)read_buf, 0, sizeof(read_buf));
+                rgb565_to_lcd((u8*)0x20004000, bytesread);
+            }
+            /*##-9- Close the open text file #############################*/
+            f_close(&MyFile);
+        }
+        else{
+            logline;
+        }
+    }
     else if(para==6){
         FRESULT res; /* FatFs function common result code */
         char fnm[32];
@@ -221,11 +275,6 @@ void test(char*p)
 
         while(1){//-------------------------------------------------------------------------
 
-#define BBN 5
-#define MIN_YUV_FILES_NUM NPERBB*BBN
-#define NPERBB 10000
-#define GET_FILE_PATH_AND_NAME(buf, n) \
-        slprintf(buf, "BB%d/V%d/YUV%d.BIN", n/NPERBB, (n%NPERBB)/100, n%NPERBB);
         if(p1>MIN_YUV_FILES_NUM-1){
             p1-= MIN_YUV_FILES_NUM;
         }
