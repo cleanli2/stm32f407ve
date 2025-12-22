@@ -351,6 +351,7 @@ void test(char*p)
     }
     else if(para==0xb){
         lprintf("check cam receive\r\n");
+        prt_hex(HAL_DCMI_GetState(&hdcmi));
         prt_dec(cam_dma_err);
         prt_dec(cam_linect);
         prt_dec(cam_vsct);
@@ -362,6 +363,7 @@ void test(char*p)
         int n=0x1c000/2;
         uint16_t*tp=(uint16_t*)0x20004000;
         lprintf("check cam receive (2)\r\n");
+        prt_hex(HAL_DCMI_GetState(&hdcmi));
         prt_dec(cam_dma_err);
         prt_dec(cam_linect);
         prt_dec(cam_vsct);
@@ -376,6 +378,7 @@ void test(char*p)
         uint16_t t;
         uint8_t* t8p=(uint8_t*)0x20004001;
         lprintf("check cam receive (3)\r\n");
+        prt_hex(HAL_DCMI_GetState(&hdcmi));
         prt_dec(cam_dma_err);
         prt_dec(cam_linect);
         prt_dec(cam_vsct);
