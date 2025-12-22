@@ -146,6 +146,7 @@
 /* Private function prototypes -----------------------------------------------*/
 static void       DCMI_DMAXferCplt(DMA_HandleTypeDef *hdma);
 static void       DCMI_DMAError(DMA_HandleTypeDef *hdma);
+static void my_dcmi_half_notify(DMA_HandleTypeDef *hdma);
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -376,6 +377,8 @@ HAL_StatusTypeDef HAL_DCMI_Start_DMA(DCMI_HandleTypeDef* hdcmi, uint32_t DCMI_Mo
 
   /* Set the dma abort callback */
   hdcmi->DMA_Handle->XferAbortCallback = NULL;
+
+  hdcmi->DMA_Handle->XferHalfCpltCallback = my_dcmi_half_notify;
   
   /* Reset transfer counters value */ 
   hdcmi->XferCount = 0U;
@@ -1150,6 +1153,10 @@ static void DCMI_DMAError(DMA_HandleTypeDef *hdma)
   HAL_DCMI_ErrorCallback(hdcmi);
 #endif /* USE_HAL_DCMI_REGISTER_CALLBACKS */   
 
+}
+static void my_dcmi_half_notify(DMA_HandleTypeDef *hdma)
+{
+    lprintf("%d\r\n", HAL_GetTick());
 }
 
 /**
