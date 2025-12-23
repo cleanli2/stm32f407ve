@@ -350,7 +350,8 @@ void test(char*p)
         ghn=0;
         gfn=0;
         LCD_SetWindows(0,0,639,479);
-        ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
+        ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)0x20004000, p1/4);
+        //ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
         int hnl=ghn, fnl=gfn;
