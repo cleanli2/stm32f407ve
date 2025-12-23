@@ -16,6 +16,8 @@ void putchars(const char *pt);
 int cam_init(void);
 extern DCMI_HandleTypeDef hdcmi;
 
+extern volatile uint32_t ghn;
+extern volatile uint32_t gfn;
 void MX_DCMI_Init(void);
 void Lcd_WriteData_16Bit(u16 Data);
 extern int g_dcmi_cfg;

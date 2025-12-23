@@ -28,6 +28,8 @@ void delay(int a);
 uint get_howmany_para(char *s);
 char * str_to_str(char *s, char**result);
 uint32_t ci=0;
+volatile uint32_t ghn=0;
+volatile uint32_t gfn=0;
 
 uint8_t cmd_caches[CMD_CACHES_SIZE][COM_MAX_LEN] = {0};
 uint32_t cmdcache_index=0;
@@ -345,10 +347,27 @@ void test(char*p)
         cam_linect=0;
         cam_vsct=0;
         cam_fmct=0;
+        ghn=0;
+        gfn=0;
         LCD_SetWindows(0,0,639,479);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
+        int hnl=ghn, fnl=gfn;
+        while(1){
+            if(ghn>hnl){
+                hnl=ghn;
+                lprintf("%d\r\n", HAL_GetTick());
+                rgb565_to_lcd_noswap((uint8_t*)0x20004000, p1/2);
+                lprintf("%d\r\n", HAL_GetTick());
+            }
+            if(gfn>fnl){
+                fnl=gfn;
+                lprintf("%d-\r\n", HAL_GetTick());
+                rgb565_to_lcd_noswap((uint8_t*)0x20004000+p1/2, p1/2);
+                lprintf("%d-\r\n", HAL_GetTick());
+            }
+        }
     }
     else if(para==0xb){
         lprintf("check cam receive\r\n");

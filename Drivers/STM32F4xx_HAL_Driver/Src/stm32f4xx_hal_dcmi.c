@@ -1081,11 +1081,7 @@ HAL_StatusTypeDef HAL_DCMI_UnRegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCM
   */
 static void DCMI_DMAXferCplt(DMA_HandleTypeDef *hdma)
 {
-    DCMI_HandleTypeDef* hdcmi = ( DCMI_HandleTypeDef* )((DMA_HandleTypeDef* )hdma)->Parent;
-    uint32_t hsize = 2*hdcmi->XferSize;//half buf
-    lprintf("%d-\r\n", HAL_GetTick());
-    rgb565_to_lcd_noswap((uint8_t*)hdcmi->pBuffPtr+hsize, hsize);
-    lprintf("%d-\r\n", HAL_GetTick());
+    gfn++;
 #if 0
   uint32_t tmp = 0U;
  
@@ -1164,11 +1160,7 @@ static void DCMI_DMAError(DMA_HandleTypeDef *hdma)
 }
 static void my_dcmi_half_notify(DMA_HandleTypeDef *hdma)
 {
-    DCMI_HandleTypeDef* hdcmi = ( DCMI_HandleTypeDef* )((DMA_HandleTypeDef* )hdma)->Parent;
-    uint32_t hsize = 2*hdcmi->XferSize;//half buf
-    lprintf("%d\r\n", HAL_GetTick());
-    rgb565_to_lcd_noswap((uint8_t*)hdcmi->pBuffPtr, hsize);
-    lprintf("%d\r\n", HAL_GetTick());
+    ghn++;
 }
 
 /**
