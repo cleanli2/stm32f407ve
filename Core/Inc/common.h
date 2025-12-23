@@ -26,4 +26,5 @@ extern int cam_vsct;
 extern int cam_fmct;
 extern int cam_dma_err;
 void rgb565_to_lcd(u8*buf, u32 len);
+void rgb565_to_lcd_noswap(u8*buf, u32 len);
 #endif

@@ -371,9 +371,14 @@ void test(char*p)
         prt_dec(cam_vsct);
         prt_dec(cam_fmct);
         LCD_SetWindows(0,0,639,479);
+        int time=HAL_GetTick();
+        rgb565_to_lcd_noswap((u8*)0x20004000, 0x1c000);
+        prt_dec(HAL_GetTick()-time);
+        /*
         while(n--){
 			Lcd_WriteData_16Bit(*tp++);
         }
+        */
     }
     else if(para==0xb3){//move forwad 1 byte
         int n=0x1c000/2-1;

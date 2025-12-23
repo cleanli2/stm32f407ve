@@ -1,6 +1,7 @@
 .text 
 
 .global rgb565_to_lcd
+.global rgb565_to_lcd_noswap
 .global color16_lcd
 .code 16
 .syntax unified
@@ -28,6 +29,33 @@ strh r3, [r4]
 subs r1, r1, #2
 cmp r1, #0
 bne.n compute_color
+
+pop {r2-r4}
+bx lr
+
+/***************************************************/
+.type rgb565_to_lcd_noswap, function
+rgb565_to_lcd_noswap:
+push {r2-r4}
+
+/*r0=char*buff, r1=lens*/
+/*r3=data, r2=tmp data*/
+
+ldr r4, =0x60020000
+and r1, r1, #0xfffffffe;
+and r0, r0, #0xfffffffe;
+
+compute_color2:
+/*color=(bf[i]<<8)|bf[i+1];*/
+ldrh r3, [r0], #2
+
+/*bl lcd_w16*/
+strh r3, [r4]
+
+/*len--*/
+subs r1, r1, #2
+cmp r1, #0
+bne.n compute_color2
 
 pop {r2-r4}
 bx lr
