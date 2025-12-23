@@ -345,6 +345,7 @@ void test(char*p)
         cam_linect=0;
         cam_vsct=0;
         cam_fmct=0;
+        LCD_SetWindows(0,0,639,479);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
@@ -361,8 +362,8 @@ void test(char*p)
         rgb565_to_lcd((u8*)0x20004000, 0x1c000);
     }
     else if(para==0xb2){
-        int n=0x1c000/2;
-        uint16_t*tp=(uint16_t*)0x20004000;
+        //int n=0x1c000/2;
+        //uint16_t*tp=(uint16_t*)0x20004000;
         lprintf("check cam receive (2)\r\n");
         prt_hex(HAL_DCMI_GetState(&hdcmi));
         prt_hex(hdcmi.ErrorCode);
