@@ -340,6 +340,21 @@ void test(char*p)
         lprintf("cam init %d\r\n", p1);
         cam_init(p1);
     }
+    else if(para==0x1cd){
+        lprintf("lcd win set\r\n");
+        uint p1=1;
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        if(p1==1){
+            lprintf("lcd 640x480\r\n");
+            LCD_SetWindows(0,0,639,479);
+        }
+        else{
+            lprintf("lcd 320x240\r\n");
+            LCD_SetWindows(0,0,319,239);
+        }
+    }
     else if(para==0xa){
         HAL_StatusTypeDef ret;
         uint p1=320;
@@ -354,7 +369,6 @@ void test(char*p)
         cam_fmct=0;
         ghn=0;
         gfn=0;
-        LCD_SetWindows(0,0,639,479);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)0x20004000, p1/4);
         //ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
         prt_hex(ret);
