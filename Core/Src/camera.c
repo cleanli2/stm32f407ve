@@ -945,11 +945,11 @@ uint8_t cam_r_reg(uint8_t addr)
 }
 int g_cam_r70p_e = 0;
 int g_cam_r71p_e = 1;
-int cam_init()
+int cam_init(int choose)
 {
     int rcam_rty=9;
     uint8_t tmpd=0;
-    int choose=7;
+    //int choose=7;
 
 
     delay_ms(20);

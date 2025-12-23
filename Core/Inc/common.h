@@ -13,7 +13,7 @@ int lstrcmp(const char *a,const char *b);
 void lmemset(char *d,unsigned char v,unsigned int n);
 char *lstrchr(const char *str, int c);
 void putchars(const char *pt);
-int cam_init(void);
+int cam_init(int);
 extern DCMI_HandleTypeDef hdcmi;
 
 extern volatile uint32_t ghn;

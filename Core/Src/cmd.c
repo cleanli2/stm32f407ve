@@ -333,7 +333,12 @@ void test(char*p)
     }
     else if(para==9){
         lprintf("cam init test\r\n");
-        cam_init();
+        uint p1=7;
+        if(np >= 2){
+            p=str_to_hex(p, &p1);
+        }
+        lprintf("cam init %d\r\n", p1);
+        cam_init(p1);
     }
     else if(para==0xa){
         HAL_StatusTypeDef ret;
