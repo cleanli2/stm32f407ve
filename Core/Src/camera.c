@@ -593,6 +593,23 @@ static void init_yuv_25fps(void)
 	sensor_write_reg(0x13, 0xf7);
 }
 
+void  ai_ov7670reg()
+{
+	cam_w_reg(0x12, 0x00);
+	cam_w_reg(0x3e, 0x19);
+
+	cam_w_reg(0x0c, 0x00);
+	cam_w_reg(0x0d, 0xf0);
+
+	cam_w_reg(0x15, 0x00);
+	cam_w_reg(0x5a, 0x23);
+	cam_w_reg(0x5b, 0x07);
+	cam_w_reg(0x42, 0x40);
+	cam_w_reg(0x43, 0x04);
+	cam_w_reg(0x44, 0xc0);
+	cam_w_reg(0x45, 0x40);
+}
+
 void set_OV7670reg_M(void)//setting already change to rgb565, modify 0x40 & 0x12
 {
 	cam_w_reg(0x8c, 0x00);
@@ -1005,6 +1022,10 @@ int cam_init(int choose)
         case 7:
             lprintf_time("modified set_OV7670reg\r\n");
             set_OV7670reg_M();
+            break;
+        case 8:
+            lprintf_time("OV7670reg by AI\r\n");
+            ai_ov7670reg();
             break;
         default:
             lprintf("cam w 0x1e return %x\r\n", cam_w_reg(0x1e, 0x30|cam_r_reg(0x1e)));
