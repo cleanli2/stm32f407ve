@@ -1080,6 +1080,8 @@ HAL_StatusTypeDef HAL_DCMI_UnRegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCM
   */
 static void DCMI_DMAXferCplt(DMA_HandleTypeDef *hdma)
 {
+    lprintf("%d-\r\n", HAL_GetTick());
+#if 0
   uint32_t tmp = 0U;
  
   DCMI_HandleTypeDef* hdcmi = ( DCMI_HandleTypeDef* )((DMA_HandleTypeDef* )hdma)->Parent;
@@ -1127,6 +1129,7 @@ static void DCMI_DMAXferCplt(DMA_HandleTypeDef *hdma)
       hdcmi->State= HAL_DCMI_STATE_READY;
     }
   }
+#endif
 }
 
 /**
