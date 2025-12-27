@@ -1276,7 +1276,7 @@ uint8_t cam_r_reg(uint8_t addr)
     return ret;
 }
 int g_cam_r70p_e = 0;
-int g_cam_r71p_e = 1;
+int g_cam_r71p_e = 0;
 int cam_init(int choose)
 {
     int rcam_rty=9;
@@ -1410,9 +1410,4 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcmi);
   cam_fmct++;
-  /* When snapshot mode, set dcmi state to ready */
-  if((hdcmi->Instance->CR & DCMI_CR_CM) == DCMI_MODE_SNAPSHOT)
-  {  
-      hdcmi->State= HAL_DCMI_STATE_READY;
-  }
 }

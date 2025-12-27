@@ -382,6 +382,7 @@ void test(char*p)
         gfn=0;
         dmabsz=p1;
 
+        HAL_DCMI_Stop(&hdcmi);
         if(para==0xa){
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)0x20004000, p1/4);
         }
