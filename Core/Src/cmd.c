@@ -580,6 +580,9 @@ void cam2sd(char*p)
                 return;
             }
         }
+        else{
+            fail=0;
+        }
         hnl=ghn;
         memcpy((uint8_t*)CAM2SD_BACK_BUF, (uint8_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         while(gfn==fnl);
