@@ -65,6 +65,7 @@ SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
 int g_dcmi_cfg = 0x101;
+int g_lcd=0;
 
 /* USER CODE END PV */
 
@@ -189,6 +190,7 @@ int main(void)
   prt_dec(HAL_RCC_GetHCLKFreq());
   prt_dec(HAL_GetTickFreq());
   if(0x5510==LCD_Read_ID()){
+      g_lcd=1;
       lprintf("detect lcd controller:nt35510, init lcd\r\n");
       LCD_Init();
   }

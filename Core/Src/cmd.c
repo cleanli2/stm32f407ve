@@ -525,6 +525,7 @@ void cam2sd(char*p)
     uint np, npic=1, fi=0;
     HAL_StatusTypeDef ret;
 
+    if(g_lcd)LCD_SetWindows(0,0,319,239);   
     dmabsz=CAM2SD_DMA_SIZE;
     lprint("cam2sd [number]\r\n");
     np = get_howmany_para(p);
@@ -585,11 +586,14 @@ void cam2sd(char*p)
         }
 #else
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        if(g_lcd) rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/2);
         sec_w+=SECTORS_PER_PIC/3;
         sd_write((u8*)CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE, sec_w, SECTORS_PER_PIC/3);
+        if(g_lcd) rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE, CAM2SD_DMA_SIZE/2);
         sec_w+=SECTORS_PER_PIC/3;
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        if(g_lcd) rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/2);
         sec_w+=SECTORS_PER_PIC/3;
 #endif
         sv_ms=HAL_GetTick()-sv_ms;
@@ -600,6 +604,10 @@ void cam2sd(char*p)
 void sd2lcd(char*p)
 {
     uint np, npic=1, fi=0, sec_r;
+    if(!g_lcd){
+        lprintf("no lcd\r\n");
+        return;
+    };
     LCD_SetWindows(0,0,319,239);   
 
     lprint("sd2lcd [number] [start]\r\n");
