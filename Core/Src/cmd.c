@@ -524,6 +524,7 @@ void cam2sd(char*p)
     char fn[16];
     FIL picfile;
     FRESULT res;
+    HAL_StatusTypeDef ret;
 
     dmabsz=CAM2SD_DMA_SIZE;
     lprint("cam2sd [number]\r\n");
@@ -532,15 +533,22 @@ void cam2sd(char*p)
         str_to_hex(p, &npic);
         prt_dec(npic);
     }
-    MX_DCMI_Init();
-    cam_init(0xa);
+    //MX_DCMI_Init();
+    //cam_init(0xa);
     ghn=0;
     gfn=0;
     hnl=ghn;
     fnl=gfn;
     while(npic--){
+        lprintf("-----------start cam receive\r\n");
         HAL_DCMI_Stop(&hdcmi);
-        HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
+        ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
+        prt_hex(ret);
+        __HAL_LOCK(&hdcmi);
+        prt_hex(hdcmi.Instance->CR);
+        hdcmi.Instance->CR |= DCMI_CR_CAPTURE;
+        prt_hex(hdcmi.Instance->CR);
+        __HAL_UNLOCK(&hdcmi);
         //wait half buffer done
         while(ghn==hnl);
         hnl=ghn;
