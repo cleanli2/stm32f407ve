@@ -598,12 +598,26 @@ void sd2lcd(char*p)
     uint np, npic=1, fi=0, sec_w;
     LCD_SetWindows(0,0,319,239);   
 
-    sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
-    sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC*2/3);
-    rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE);
-    sec_w+=SECTORS_PER_PIC*2/3;
-    sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
-    rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
+    lprint("sd2lcd [number] [start]\r\n");
+    np = get_howmany_para(p);
+    if(np == 1){
+        p=str_to_hex(p, &npic);
+    }
+    if(np == 2){
+        p=str_to_hex(p, &fi);
+    }
+    prt_dec(npic);
+    prt_dec(fi);
+
+    sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
+    while(npic--){
+        sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC*2/3);
+        rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE);
+        sec_w+=SECTORS_PER_PIC*2/3;
+        sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
+        sec_w+=SECTORS_PER_PIC/3;
+    }
 }
 static const struct command cmd_list[]=
 {
