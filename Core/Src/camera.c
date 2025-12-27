@@ -1389,7 +1389,7 @@ void HAL_DCMI_LineEventCallback(DCMI_HandleTypeDef *hdcmi)
   *                the configuration information for DCMI.
   * @retval None
   */
-__weak void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
+void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcmi);
@@ -1405,12 +1405,14 @@ __weak void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
   *                the configuration information for DCMI.
   * @retval None
   */
-__weak void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
+void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcmi);
-  /* NOTE : This function Should not be modified, when the callback is needed,
-            the HAL_DCMI_FrameEventCallback could be implemented in the user file
-   */
   cam_fmct++;
+  /* When snapshot mode, set dcmi state to ready */
+  if((hdcmi->Instance->CR & DCMI_CR_CM) == DCMI_MODE_SNAPSHOT)
+  {  
+      hdcmi->State= HAL_DCMI_STATE_READY;
+  }
 }
