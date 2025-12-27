@@ -30,6 +30,14 @@ char * str_to_str(char *s, char**result);
 uint32_t ci=0;
 volatile uint32_t ghn=0;
 volatile uint32_t gfn=0;
+uint32_t dmabsz;
+uint32_t fps;
+uint32_t g_timetk=0;
+uint32_t g_frame_w=640;
+uint32_t g_frame_h=480;
+uint32_t hnl=0;
+uint32_t fnl=0;
+uint32_t swap=0;
 
 uint8_t cmd_caches[CMD_CACHES_SIZE][COM_MAX_LEN] = {0};
 uint32_t cmdcache_index=0;
@@ -342,24 +350,27 @@ void test(char*p)
     }
     else if(para==0x1cd){
         lprintf("lcd win set\r\n");
-        uint p1=1;
+        uint p1=640, p2=480;
         if(np >= 2){
             p=str_to_hex(p, &p1);
         }
-        if(p1==1){
-            lprintf("lcd 640x480\r\n");
-            LCD_SetWindows(0,0,639,479);
+        if(np >= 3){
+            p=str_to_hex(p, &p2);
         }
-        else{
-            lprintf("lcd 320x240\r\n");
-            LCD_SetWindows(0,0,319,239);
-        }
+        lprintf("lcd %dx%d\r\n", p1, p2);
+        g_frame_w=p1;
+        g_frame_h=p2;
+        LCD_SetWindows(0,0,p1-1,p2-1);
     }
-    else if(para==0xa){
+    else if(para==0xa || para ==0xa5){
         HAL_StatusTypeDef ret;
         uint p1=320;
+        swap=0;
         if(np >= 2){
             p=str_to_hex(p, &p1);
+        }
+        if(np >= 3){
+            swap=1;
         }
         lprintf("start cam receive %d\r\n", p1);
         //0x20004000 -> (320x240=76800)0x12c00 ->0x20016c00
@@ -369,25 +380,17 @@ void test(char*p)
         cam_fmct=0;
         ghn=0;
         gfn=0;
+        dmabsz=p1;
+
+        if(para==0xa){
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)0x20004000, p1/4);
-        //ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
+        }
+        else{
+        ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)0x20004000, p1/4);
+        }
+        hnl=ghn, fnl=gfn;
         prt_hex(ret);
         lprintf("start cam receive done\r\n");
-        int hnl=ghn, fnl=gfn;
-        while(1){
-            if(ghn>hnl){
-                hnl=ghn;
-                lprintf("%d\r\n", HAL_GetTick());
-                rgb565_to_lcd_noswap((uint8_t*)0x20004000, p1/2);
-                lprintf("%d\r\n", HAL_GetTick());
-            }
-            if(gfn>fnl){
-                fnl=gfn;
-                lprintf("%d-\r\n", HAL_GetTick());
-                rgb565_to_lcd_noswap((uint8_t*)0x20004000+p1/2, p1/2);
-                lprintf("%d-\r\n", HAL_GetTick());
-            }
-        }
     }
     else if(para==0xb){
         lprintf("check cam receive\r\n");
@@ -459,8 +462,50 @@ void test(char*p)
         MX_DCMI_Init();
     }
 }
+void cam_reg(char *p)
+{
+    uint addr, value, tmp,ret;
+
+    tmp = get_howmany_para(p);
+    if(tmp == 0 || tmp > 2)
+	goto error;
+    p = str_to_hex(p, &addr);
+    if(tmp == 1){
+        value=cam_r_reg(addr);
+        lprint("Read 0x%x@0x%x ret=%x\r\n",value,addr,camreaderr);
+    }
+    else{
+        p = str_to_hex(p, &value);
+        ret=cam_w_reg(addr, value);
+        lprint("Write 0x%x@0x%x ret=%x\r\n",value,addr,ret);
+    }
+    prt_dec(fps);
+    return;
+
+error:
+    lprint("Err!\r\ncr addr [data]\r\n");
+}
+
+void event_handle()
+{
+    uint timetk_l;
+    if(ghn>hnl){
+        hnl=ghn;
+        if(swap) rgb565_to_lcd((uint8_t*)0x20004000, dmabsz/2);
+        else rgb565_to_lcd_noswap((uint8_t*)0x20004000, dmabsz/2);
+    }
+    if(gfn>fnl){
+        fnl=gfn;
+        timetk_l=HAL_GetTick();
+        if(swap) rgb565_to_lcd((uint8_t*)0x20004000+dmabsz/2, dmabsz/2);
+        else rgb565_to_lcd_noswap((uint8_t*)0x20004000+dmabsz/2, dmabsz/2);
+        fps = 1000*dmabsz/(timetk_l-g_timetk)/g_frame_w/g_frame_h/2;
+        g_timetk=timetk_l;
+    }
+}
 static const struct command cmd_list[]=
 {
+    {"cr",cam_reg},
     {"exit",cmd_exit},
     {"help",print_help},
     {"history",history},
@@ -721,6 +766,9 @@ void run_cmd_interface()
     while(!quit_cmd){
         last_c = c;
         //wait_input();
+        while ((__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == 0)){
+            event_handle();
+        }
         c = con_recv();
         if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
             if(c == ENTER_CHAR){

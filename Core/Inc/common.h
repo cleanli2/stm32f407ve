@@ -15,6 +15,7 @@ char *lstrchr(const char *str, int c);
 void putchars(const char *pt);
 int cam_init(int);
 extern DCMI_HandleTypeDef hdcmi;
+extern UART_HandleTypeDef huart2;
 
 extern volatile uint32_t ghn;
 extern volatile uint32_t gfn;
@@ -29,4 +30,7 @@ extern int cam_fmct;
 extern int cam_dma_err;
 void rgb565_to_lcd(u8*buf, u32 len);
 void rgb565_to_lcd_noswap(u8*buf, u32 len);
+int cam_w_reg(uint8_t addr, uint8_t data);
+uint8_t cam_r_reg(uint8_t addr);
+extern int camreaderr;
 #endif
