@@ -523,7 +523,7 @@ void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
 #define MAX_PICS 200000
 void cam2sd(char*p)
 {
-    uint np, npic=1, fi=0, timeout=0;
+    uint np, npic=1, fi=0, timeout=0, fail=0;
     HAL_StatusTypeDef ret;
 
     if(g_lcd)LCD_SetWindows(0,0,319,239);   
@@ -562,10 +562,22 @@ void cam2sd(char*p)
         {
             if((HAL_GetTick()-timeout)>100){
                 lprintf("---timeout\r\n");
+                fail++;
+                break;;
+            }
+        }
+        if((HAL_GetTick()-timeout)>100){
+            if(fail<10)continue;
+            else if(fail<20){
+                lprintf("dcmi init\r\n");
+                MX_DCMI_Init();
+                continue;
+            }
+            else{
+                lprintf("can't recover dcmi\r\n");
                 return;
             }
         }
-        timeout=0;
         hnl=ghn;
         memcpy((uint8_t*)CAM2SD_BACK_BUF, (uint8_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         while(gfn==fnl);
