@@ -555,7 +555,8 @@ void cam2sd(char*p)
     while(npic--){
         HAL_DCMI_Stop(&hdcmi);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
-        prt_hex(ret);
+        (void)ret;
+        //prt_hex(ret);
         timeout=HAL_GetTick();
         //wait half buffer done
         while(ghn==hnl)
@@ -584,7 +585,7 @@ void cam2sd(char*p)
         fnl=gfn;
         while(ghn==hnl);
         hnl=ghn;
-        lprintf("1 frame done now, write to sd\r\n");
+        //lprintf("1 frame done now, write to sd\r\n");
         u32 sv_ms=HAL_GetTick();
         //swap back buf and dma buf
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
@@ -610,6 +611,7 @@ void cam2sd(char*p)
             logline;
         }
 #else
+        prt_dec(fi);
         if(sec_w>MAX_PICS*SECTORS_PER_PIC){
             while(1){
                 prt_dec(sec_w);
@@ -656,6 +658,7 @@ void sd2lcd(char*p)
 
     sec_r=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
     while(npic--){
+        prt_dec(fi);
         if(sec_r>MAX_PICS*SECTORS_PER_PIC){
             while(1){
                 prt_dec(sec_r);

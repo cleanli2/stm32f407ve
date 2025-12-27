@@ -387,13 +387,11 @@ HAL_StatusTypeDef HAL_DCMI_Start_DMA(DCMI_HandleTypeDef* hdcmi, uint32_t DCMI_Mo
 
   if(Length <= 0xFFFFU)
   {
-      logline;
     /* Enable the DMA Stream */
     status = HAL_DMA_Start_IT(hdcmi->DMA_Handle, (uint32_t)&hdcmi->Instance->DR, (uint32_t)pData, Length);
   }
   else /* DCMI_DOUBLE_BUFFER Mode */
   {
-      logline;
     /* Set the DMA memory1 conversion complete callback */
     hdcmi->DMA_Handle->XferM1CpltCallback = DCMI_DMAXferCplt;
 
