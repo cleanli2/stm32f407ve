@@ -527,12 +527,16 @@ void cam2sd(char*p)
 
     if(g_lcd)LCD_SetWindows(0,0,319,239);   
     dmabsz=CAM2SD_DMA_SIZE;
-    lprint("cam2sd [number]\r\n");
+    lprint("cam2sd [number] [start]\r\n");
     np = get_howmany_para(p);
-    if(np == 1){
-        str_to_hex(p, &npic);
-        prt_dec(npic);
+    if(np >= 1){
+        p=str_to_hex(p, &npic);
     }
+    if(np >= 2){
+        p=str_to_hex(p, &fi);
+    }
+    prt_dec(npic);
+    prt_dec(fi);
     //MX_DCMI_Init();
     //cam_init(0xa);
     ghn=0;
@@ -620,10 +624,10 @@ void sd2lcd(char*p)
 
     lprint("sd2lcd [number] [start]\r\n");
     np = get_howmany_para(p);
-    if(np == 1){
+    if(np >= 1){
         p=str_to_hex(p, &npic);
     }
-    if(np == 2){
+    if(np >= 2){
         p=str_to_hex(p, &fi);
     }
     prt_dec(npic);
