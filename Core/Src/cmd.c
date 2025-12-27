@@ -553,6 +553,7 @@ void cam2sd(char*p)
     uint sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
 #endif
     while(npic--){
+        u32 sv_ms=HAL_GetTick();
         HAL_DCMI_Stop(&hdcmi);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
         (void)ret;
@@ -586,7 +587,6 @@ void cam2sd(char*p)
         while(ghn==hnl);
         hnl=ghn;
         //lprintf("1 frame done now, write to sd\r\n");
-        u32 sv_ms=HAL_GetTick();
         //swap back buf and dma buf
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
 #ifdef SAVE_CAM_FILESYS
