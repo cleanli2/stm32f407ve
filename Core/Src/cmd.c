@@ -522,7 +522,7 @@ void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
 #define HALF_CAM2SD_DMA_SIZE (CAM2SD_DMA_SIZE /2)
 void cam2sd(char*p)
 {
-    uint np, npic=1, fi=0;
+    uint np, npic=1, fi=0, timeout=0;
     HAL_StatusTypeDef ret;
 
     if(g_lcd)LCD_SetWindows(0,0,319,239);   
@@ -551,8 +551,16 @@ void cam2sd(char*p)
         HAL_DCMI_Stop(&hdcmi);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
         prt_hex(ret);
+        timeout=HAL_GetTick();
         //wait half buffer done
-        while(ghn==hnl);
+        while(ghn==hnl)
+        {
+            if((HAL_GetTick()-timeout)>100){
+                lprintf("---timeout\r\n");
+                return;
+            }
+        }
+        timeout=0;
         hnl=ghn;
         memcpy((uint8_t*)CAM2SD_BACK_BUF, (uint8_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         while(gfn==fnl);
