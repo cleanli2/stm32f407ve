@@ -520,6 +520,7 @@ void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
 #define CAM2SD_DMA_SIZE 0x19000
 #define CAM2SD_BACK_BUF 0x10000000
 #define HALF_CAM2SD_DMA_SIZE (CAM2SD_DMA_SIZE /2)
+#define MAX_PICS 200000
 void cam2sd(char*p)
 {
     uint np, npic=1, fi=0, timeout=0;
@@ -597,6 +598,13 @@ void cam2sd(char*p)
             logline;
         }
 #else
+        if(sec_w>MAX_PICS*SECTORS_PER_PIC){
+            while(1){
+                prt_dec(sec_w);
+                prt_dec(fi);
+                HAL_Delay(2000);
+            }
+        }
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
         if(g_lcd) rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/2);
         sec_w+=SECTORS_PER_PIC/3;
@@ -607,6 +615,7 @@ void cam2sd(char*p)
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
         if(g_lcd) rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/2);
         sec_w+=SECTORS_PER_PIC/3;
+        fi++;
 #endif
         sv_ms=HAL_GetTick()-sv_ms;
         prt_dec(sv_ms);
@@ -635,12 +644,20 @@ void sd2lcd(char*p)
 
     sec_r=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
     while(npic--){
+        if(sec_r>MAX_PICS*SECTORS_PER_PIC){
+            while(1){
+                prt_dec(sec_r);
+                prt_dec(fi);
+                HAL_Delay(2000);
+            }
+        }
         sd_read((u8*)CAM2SD_DMA_ADDR, sec_r, SECTORS_PER_PIC*2/3);
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE);
         sec_r+=SECTORS_PER_PIC*2/3;
         sd_read((u8*)CAM2SD_DMA_ADDR, sec_r, SECTORS_PER_PIC/3);
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         sec_r+=SECTORS_PER_PIC/3;
+        fi++;
     }
 }
 static const struct command cmd_list[]=
