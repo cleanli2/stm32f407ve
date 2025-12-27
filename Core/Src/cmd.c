@@ -636,6 +636,11 @@ void cam2sd(char*p)
 #endif
         sv_ms=HAL_GetTick()-sv_ms;
         prt_dec(sv_ms);
+        if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_RESET)
+        {
+            lprintf("A0 pressed\r\n");
+            break;
+        }
     }
     return;
 }
@@ -927,6 +932,17 @@ void run_cmd_interface()
     char c = 0, last_c = 0;
 
     logline;
+    if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_RESET)
+    {
+        //key pressed
+        lprintf("start camera recording\r\n");
+        int lt=4;
+        while(lt--){
+            prt_dec(lt);
+            HAL_Delay(1000);
+        }
+        cam2sd("ffffffff 0");
+    }
     mrw_addr = (uint32_t*)0x20000000;
 #ifdef GIT_SHA1
     lprintf("GIT %s\r\n", GIT_SHA1);
