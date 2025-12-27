@@ -593,6 +593,18 @@ void cam2sd(char*p)
     }
     return;
 }
+void sd2lcd(char*p)
+{
+    uint np, npic=1, fi=0, sec_w;
+    LCD_SetWindows(0,0,319,239);   
+
+    sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
+    sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC*2/3);
+    rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE);
+    sec_w+=SECTORS_PER_PIC*2/3;
+    sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+    rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
+}
 static const struct command cmd_list[]=
 {
     {"cam2sd",cam2sd},
@@ -605,6 +617,7 @@ static const struct command cmd_list[]=
     {"pm", print_mem},
     {"r",read_mem},
     {"reboot",reboot},
+    {"sd2lcd",sd2lcd},
     {"test",test},
     {"w",write_mem},
     {NULL, NULL},
