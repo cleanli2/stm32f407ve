@@ -148,7 +148,11 @@ int main(void)
   MX_USART2_UART_Init();
   lprintf("uart2 ready\r\n");
   MX_SDIO_SD_Init();
+#ifdef ENABLE_SDFS 
   MX_FATFS_Init();
+#else
+  HAL_SD_Init(&hsd);
+#endif
   MX_FSMC_Init();
   MX_I2C2_Init();
   MX_DCMI_Init();
@@ -650,7 +654,12 @@ int dma_uart_recved()
     return ret;
 }
 uint32_t sd_rx_cnt=0;
-#if 0
+uint32_t sd_tx_cnt=0;
+#ifndef ENABLE_SDFS 
+void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd)
+{
+    sd_tx_cnt++;
+}
 void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd)
 {
     sd_rx_cnt++;
@@ -674,16 +683,29 @@ void show_sdinfo()
             (uint32_t)(sdcapa/1024/1024/1024),
             (uint32_t)(sdcapa/1000000000));
 }
+void sd_write(uint8_t*w_buf, uint32_t p1, uint32_t p2)
+{
+    uint32_t ct=sd_tx_cnt;
+    HAL_StatusTypeDef ret;
+    prt_hex(HAL_SD_GetCardState(&hsd));
+    ret=HAL_SD_WriteBlocks_DMA(&hsd, w_buf, p1, p2);
+    prt_hex(ret);
+    lprintf("waiting sd wt done\r\n");
+    while(ct==sd_tx_cnt);
+    lprintf("wait sd status\r\n");
+    while(HAL_SD_GetCardState(&hsd) != HAL_SD_CARD_TRANSFER );
+}
 void sd_read(uint8_t*read_buf, uint32_t p1, uint32_t p2)
 {
-    uint32_t ct=sd_rx_cnt, wct=0;
+    uint32_t ct=sd_rx_cnt;
     HAL_StatusTypeDef ret;
     prt_hex(HAL_SD_GetCardState(&hsd));
     ret=HAL_SD_ReadBlocks_DMA(&hsd, read_buf, p1, p2);
     prt_hex(ret);
     lprintf("waiting sd rx done\r\n");
-    while(ct==sd_rx_cnt)wct++;
-    lprintf("sd rx done wct=%d\r\n", wct);
+    while(ct==sd_rx_cnt);
+    lprintf("wait sd status\r\n");
+    while(HAL_SD_GetCardState(&hsd) != HAL_SD_CARD_TRANSFER );
 }
 /* USER CODE END 4 */
 

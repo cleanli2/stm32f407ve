@@ -580,20 +580,13 @@ void cam2sd(char*p)
             logline;
         }
 #else
-        HAL_StatusTypeDef sdret;
         uint sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
-        sdret=HAL_SD_WriteBlocks_DMA(&hsd, (u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
-        prt_hex(sdret);
+        sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
         sec_w+=SECTORS_PER_PIC/3;
-        wait_sdw_done();
-        sdret=HAL_SD_WriteBlocks_DMA(&hsd, (u8*)CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE, sec_w, SECTORS_PER_PIC/3);
-        prt_hex(sdret);
+        sd_write((u8*)CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE, sec_w, SECTORS_PER_PIC/3);
         sec_w+=SECTORS_PER_PIC/3;
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
-        wait_sdw_done();
-        sdret=HAL_SD_WriteBlocks_DMA(&hsd, (u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
-        prt_hex(sdret);
-        wait_sdw_done();
+        sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
 #endif
         sv_ms=HAL_GetTick()-sv_ms;
         prt_dec(sv_ms);
