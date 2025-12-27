@@ -34,4 +34,5 @@ void rgb565_to_lcd_noswap(u8*buf, u32 len);
 int cam_w_reg(uint8_t addr, uint8_t data);
 uint8_t cam_r_reg(uint8_t addr);
 extern int camreaderr;
+void wait_sdw_done();
 #endif

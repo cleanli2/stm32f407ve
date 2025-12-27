@@ -27,6 +27,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ff_gen_drv.h"
 #include "sd_diskio.h"
+#include "lprintf.h"
 
 #include <string.h>
 
@@ -416,6 +417,13 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
 }
 #endif /* _USE_WRITE == 1 */
 
+void wait_sdw_done()
+{
+    lprintf("wait Writestatus\r\n");
+    while(WriteStatus == 0);
+    lprintf("wait sd status\r\n");
+    while(BSP_SD_GetCardState() != SD_TRANSFER_OK);
+}
 /* USER CODE BEGIN beforeIoctlSection */
 /* can be used to modify previous code / undefine following code / add new code */
 /* USER CODE END beforeIoctlSection */

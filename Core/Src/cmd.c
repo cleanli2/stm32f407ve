@@ -514,16 +514,15 @@ void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
         buf2[index]=t;
     }
 }
+#define START_SECTORS_PIC (0x100000/512)
+#define SECTORS_PER_PIC (320*240*2/512)
 #define CAM2SD_DMA_ADDR 0x20004000
 #define CAM2SD_DMA_SIZE 0x19000
 #define CAM2SD_BACK_BUF 0x10000000
 #define HALF_CAM2SD_DMA_SIZE (CAM2SD_DMA_SIZE /2)
 void cam2sd(char*p)
 {
-    uint np, npic=1, fi=0, byteswrite;
-    char fn[16];
-    FIL picfile;
-    FRESULT res;
+    uint np, npic=1, fi=0;
     HAL_StatusTypeDef ret;
 
     dmabsz=CAM2SD_DMA_SIZE;
@@ -555,6 +554,11 @@ void cam2sd(char*p)
         u32 sv_ms=HAL_GetTick();
         //swap back buf and dma buf
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
+#ifdef SAVE_CAM_FILESYS
+        char fn[16];
+        uint byteswrite;
+        FIL picfile;
+        FRESULT res;
         slprintf(fn, "square%d.bin", fi++);
         if(f_open(&picfile, fn, FA_CREATE_ALWAYS|FA_WRITE) == FR_OK){
             lprintf("open %s OK\r\n", fn);
@@ -575,6 +579,22 @@ void cam2sd(char*p)
         else{
             logline;
         }
+#else
+        HAL_StatusTypeDef sdret;
+        uint sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
+        sdret=HAL_SD_WriteBlocks_DMA(&hsd, (u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        prt_hex(sdret);
+        sec_w+=SECTORS_PER_PIC/3;
+        wait_sdw_done();
+        sdret=HAL_SD_WriteBlocks_DMA(&hsd, (u8*)CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE, sec_w, SECTORS_PER_PIC/3);
+        prt_hex(sdret);
+        sec_w+=SECTORS_PER_PIC/3;
+        buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
+        wait_sdw_done();
+        sdret=HAL_SD_WriteBlocks_DMA(&hsd, (u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        prt_hex(sdret);
+        wait_sdw_done();
+#endif
         sv_ms=HAL_GetTick()-sv_ms;
         prt_dec(sv_ms);
     }
