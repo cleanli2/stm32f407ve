@@ -540,15 +540,9 @@ void cam2sd(char*p)
     hnl=ghn;
     fnl=gfn;
     while(npic--){
-        lprintf("-----------start cam receive\r\n");
         HAL_DCMI_Stop(&hdcmi);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
         prt_hex(ret);
-        __HAL_LOCK(&hdcmi);
-        prt_hex(hdcmi.Instance->CR);
-        hdcmi.Instance->CR |= DCMI_CR_CAPTURE;
-        prt_hex(hdcmi.Instance->CR);
-        __HAL_UNLOCK(&hdcmi);
         //wait half buffer done
         while(ghn==hnl);
         hnl=ghn;

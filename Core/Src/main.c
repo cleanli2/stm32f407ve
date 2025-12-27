@@ -15,7 +15,7 @@
   *
   ******************************************************************************
   */
-#include "cmd.h"
+#include "common.h"
 #include "lprintf.h"
 #include <string.h>
 
@@ -100,9 +100,9 @@ void __io_putchar(char c)
 }
 
 
-void putchars(const unsigned char *pt)
+void putchars(const char *pt)
 {
-    HAL_UART_Transmit(&huart2, pt, strlen((const char*)pt), 10000);
+    HAL_UART_Transmit(&huart2, (const unsigned char*)pt, strlen((const char*)pt), 10000);
 }
 
 
@@ -151,7 +151,7 @@ int main(void)
   MX_FATFS_Init();
   MX_FSMC_Init();
   MX_I2C2_Init();
-  //MX_DCMI_Init();
+  MX_DCMI_Init();
   MX_TIM1_Init();
   MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
@@ -188,6 +188,7 @@ int main(void)
       lprintf("detect lcd controller:nt35510, init lcd\r\n");
       LCD_Init();
   }
+  cam_init(0xa);
   run_cmd_interface();
   while(1);
   /* USER CODE END 3 */

@@ -2,6 +2,7 @@
 #define __COMMON_H
 
 #include "lprintf.h"
+#include "cmd.h"
 #include "stm32f4xx_hal.h"
 
 typedef uint8_t u8;
