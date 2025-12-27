@@ -504,8 +504,83 @@ void event_handle()
         g_timetk=timetk_l;
     }
 }
+void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
+{
+    uint32_t t;
+    register uint32_t index=0;
+    for(index=0;index<sizeofu32;index++){
+        t=buf1[index];
+        buf1[index]=buf2[index];
+        buf2[index]=t;
+    }
+}
+#define CAM2SD_DMA_ADDR 0x20004000
+#define CAM2SD_DMA_SIZE 0x19000
+#define CAM2SD_BACK_BUF 0x10000000
+#define HALF_CAM2SD_DMA_SIZE (CAM2SD_DMA_SIZE /2)
+void cam2sd(char*p)
+{
+    uint np, npic=1, fi=0, byteswrite;
+    char fn[16];
+    FIL picfile;
+    FRESULT res;
+
+    dmabsz=CAM2SD_DMA_SIZE;
+    lprint("cam2sd [number]\r\n");
+    np = get_howmany_para(p);
+    if(np == 1){
+        str_to_hex(p, &npic);
+        prt_dec(npic);
+    }
+    MX_DCMI_Init();
+    cam_init(0xa);
+    ghn=0;
+    gfn=0;
+    hnl=ghn;
+    fnl=gfn;
+    while(npic--){
+        HAL_DCMI_Stop(&hdcmi);
+        HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
+        //wait half buffer done
+        while(ghn==hnl);
+        hnl=ghn;
+        memcpy((uint8_t*)CAM2SD_BACK_BUF, (uint8_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
+        while(gfn==fnl);
+        fnl=gfn;
+        while(ghn==hnl);
+        hnl=ghn;
+        lprintf("1 frame done now, write to sd\r\n");
+        u32 sv_ms=HAL_GetTick();
+        //swap back buf and dma buf
+        buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
+        slprintf(fn, "square%d.bin", fi++);
+        if(f_open(&picfile, fn, FA_CREATE_ALWAYS|FA_WRITE) == FR_OK){
+            lprintf("open %s OK\r\n", fn);
+            res = f_write(&picfile, (u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE, (UINT*)&byteswrite);
+            prt_hex(byteswrite);
+            prt_hex(res);
+            res = f_write(&picfile, (u8*)(CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE), HALF_CAM2SD_DMA_SIZE, (UINT*)&byteswrite);
+            prt_hex(byteswrite);
+            prt_hex(res);
+            buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
+            res = f_write(&picfile, (u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE, (UINT*)&byteswrite);
+            prt_hex(byteswrite);
+            prt_hex(res);
+
+            f_close(&picfile);
+            lprintf("write to sd done\r\n");
+        }
+        else{
+            logline;
+        }
+        sv_ms=HAL_GetTick()-sv_ms;
+        prt_dec(sv_ms);
+    }
+    return;
+}
 static const struct command cmd_list[]=
 {
+    {"cam2sd",cam2sd},
     {"cr",cam_reg},
     {"exit",cmd_exit},
     {"help",print_help},
