@@ -538,6 +538,14 @@ void cam2sd(char*p)
     gfn=0;
     hnl=ghn;
     fnl=gfn;
+#ifdef SAVE_CAM_FILESYS
+    char fn[16];
+    uint byteswrite;
+    FIL picfile;
+    FRESULT res;
+#else
+    uint sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
+#endif
     while(npic--){
         HAL_DCMI_Stop(&hdcmi);
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
@@ -555,10 +563,6 @@ void cam2sd(char*p)
         //swap back buf and dma buf
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
 #ifdef SAVE_CAM_FILESYS
-        char fn[16];
-        uint byteswrite;
-        FIL picfile;
-        FRESULT res;
         slprintf(fn, "square%d.bin", fi++);
         if(f_open(&picfile, fn, FA_CREATE_ALWAYS|FA_WRITE) == FR_OK){
             lprintf("open %s OK\r\n", fn);
@@ -580,13 +584,13 @@ void cam2sd(char*p)
             logline;
         }
 #else
-        uint sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi++;
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
         sec_w+=SECTORS_PER_PIC/3;
         sd_write((u8*)CAM2SD_DMA_ADDR+HALF_CAM2SD_DMA_SIZE, sec_w, SECTORS_PER_PIC/3);
         sec_w+=SECTORS_PER_PIC/3;
         buf_swap((uint32_t*)CAM2SD_BACK_BUF, (uint32_t*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE/4);
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        sec_w+=SECTORS_PER_PIC/3;
 #endif
         sv_ms=HAL_GetTick()-sv_ms;
         prt_dec(sv_ms);
@@ -595,7 +599,7 @@ void cam2sd(char*p)
 }
 void sd2lcd(char*p)
 {
-    uint np, npic=1, fi=0, sec_w;
+    uint np, npic=1, fi=0, sec_r;
     LCD_SetWindows(0,0,319,239);   
 
     lprint("sd2lcd [number] [start]\r\n");
@@ -609,14 +613,14 @@ void sd2lcd(char*p)
     prt_dec(npic);
     prt_dec(fi);
 
-    sec_w=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
+    sec_r=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
     while(npic--){
-        sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC*2/3);
+        sd_read((u8*)CAM2SD_DMA_ADDR, sec_r, SECTORS_PER_PIC*2/3);
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE);
-        sec_w+=SECTORS_PER_PIC*2/3;
-        sd_read((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
+        sec_r+=SECTORS_PER_PIC*2/3;
+        sd_read((u8*)CAM2SD_DMA_ADDR, sec_r, SECTORS_PER_PIC/3);
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
-        sec_w+=SECTORS_PER_PIC/3;
+        sec_r+=SECTORS_PER_PIC/3;
     }
 }
 static const struct command cmd_list[]=
