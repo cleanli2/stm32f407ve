@@ -621,11 +621,16 @@ void cam2sd(char*p)
             l_ts=ts;
         }
         if(sec_w>=MAX_SECS){
+#ifdef NO_OVER_WRITE
             while(1){
                 prt_dec(sec_w);
                 prt_dec(fi);
                 HAL_Delay(2000);
             }
+#else
+            fi=0;
+            sec_w=START_SECTORS_PIC;
+#endif
         }
         sd_write((u8*)CAM2SD_DMA_ADDR, sec_w, SECTORS_PER_PIC/3);
         if(g_lcd) rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/2);
