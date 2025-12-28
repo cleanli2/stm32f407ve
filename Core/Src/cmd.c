@@ -523,7 +523,7 @@ void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
 #define MAX_PICS 200000
 void cam2sd(char*p)
 {
-    uint np, npic=1, fi=0, timeout=0, fail=0;
+    uint np, npic=1, fi=0, timeout=0, fail=0, l_ts=0, ts;
     HAL_StatusTypeDef ret;
 
     if(g_lcd)LCD_SetWindows(0,0,319,239);   
@@ -614,7 +614,11 @@ void cam2sd(char*p)
             logline;
         }
 #else
-        prt_dec(fi);
+        if((fi%10)==0){
+            ts=HAL_GetTick();
+            lprintf("frame index=%d(0x%x) fps=%d\r\n", fi, fi, 10000/(ts-l_ts));
+            l_ts=ts;
+        }
         if(sec_w>MAX_PICS*SECTORS_PER_PIC){
             while(1){
                 prt_dec(sec_w);
@@ -636,6 +640,11 @@ void cam2sd(char*p)
 #endif
         sv_ms=HAL_GetTick()-sv_ms;
         prt_dec(sv_ms);
+        if(con_is_recved()&&con_recv()=='q')
+        {
+            lprintf("'q' recved\r\n");
+            break;
+        }
         if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_RESET)
         {
             lprintf("A0 pressed\r\n");
@@ -647,7 +656,7 @@ void cam2sd(char*p)
 }
 void sd2lcd(char*p)
 {
-    uint np, npic=1, fi=0, sec_r;
+    uint np, npic=1, fi=0, sec_r, l_ts=0, ts;
     if(!g_lcd){
         lprintf("no lcd\r\n");
         return;
@@ -667,7 +676,11 @@ void sd2lcd(char*p)
 
     sec_r=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
     while(npic--){
-        prt_dec(fi);
+        if((fi%10)==0){
+            ts=HAL_GetTick();
+            lprintf("frame index=%d(0x%x) fps=%d\r\n", fi, fi, 10000/(ts-l_ts));
+            l_ts=ts;
+        }
         if(sec_r>MAX_PICS*SECTORS_PER_PIC){
             while(1){
                 prt_dec(sec_r);
@@ -682,6 +695,11 @@ void sd2lcd(char*p)
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         sec_r+=SECTORS_PER_PIC/3;
         fi++;
+        if(con_is_recved()&&con_recv()=='q')
+        {
+            lprintf("'q' recved\r\n");
+            break;
+        }
     }
 }
 static const struct command cmd_list[]=

@@ -3,7 +3,7 @@
 
 #define con_send __io_putchar
 #define con_recv __io_getchar
-#define con_is_recved() __io_char_received()
+#define con_is_recved() (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) != 0)
 
 #define COM_MAX_LEN 81
 #define CMD_CACHES_SIZE 20
