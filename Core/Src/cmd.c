@@ -521,6 +521,7 @@ void buf_swap(uint32_t*buf1, uint32_t*buf2, uint32_t sizeofu32)
 #define CAM2SD_BACK_BUF 0x10000000
 #define HALF_CAM2SD_DMA_SIZE (CAM2SD_DMA_SIZE /2)
 #define MAX_PICS 200000
+#define MAX_SECS (START_SECTORS_PIC+MAX_PICS*SECTORS_PER_PIC)
 void cam2sd(char*p)
 {
     uint np, npic=1, fi=0, timeout=0, fail=0, l_ts=0, ts;
@@ -619,7 +620,7 @@ void cam2sd(char*p)
             lprintf("frame index=%d(0x%x) fps=%d\r\n", fi, fi, 10000/(ts-l_ts));
             l_ts=ts;
         }
-        if(sec_w>MAX_PICS*SECTORS_PER_PIC){
+        if(sec_w>=MAX_SECS){
             while(1){
                 prt_dec(sec_w);
                 prt_dec(fi);
@@ -681,7 +682,7 @@ void sd2lcd(char*p)
             lprintf("frame index=%d(0x%x) fps=%d\r\n", fi, fi, 10000/(ts-l_ts));
             l_ts=ts;
         }
-        if(sec_r>MAX_PICS*SECTORS_PER_PIC){
+        if(sec_r>=MAX_SECS){
             while(1){
                 prt_dec(sec_r);
                 prt_dec(fi);
