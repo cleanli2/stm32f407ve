@@ -1411,3 +1411,15 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
   UNUSED(hdcmi);
   cam_fmct++;
 }
+
+void toggle_recled()
+{
+    static uint32_t gl_recled=0;
+    gl_recled=1-gl_recled;
+    if(gl_recled){
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_7, GPIO_PIN_RESET);
+    }
+    else{
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_7, GPIO_PIN_SET);
+    }
+}

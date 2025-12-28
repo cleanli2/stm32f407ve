@@ -37,4 +37,6 @@ uint8_t cam_r_reg(uint8_t addr);
 extern int camreaderr;
 void wait_sdw_done();
 void sd_write(uint8_t*w_buf, uint32_t p1, uint32_t p2);
+void toggle_recled();
+#define REC_LED_TOGGLE toggle_recled
 #endif

@@ -641,6 +641,7 @@ void cam2sd(char*p)
             lprintf("A0 pressed\r\n");
             break;
         }
+        REC_LED_TOGGLE();
     }
     return;
 }
