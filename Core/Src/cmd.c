@@ -701,10 +701,63 @@ void sd2lcd(char*p)
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         sec_r+=SECTORS_PER_PIC/3;
         fi++;
-        if(con_is_recved()&&con_recv()=='q')
+        if(con_is_recved())
         {
-            lprintf("'q' recved\r\n");
-            break;
+            char c=con_recv();
+            int ifi=fi;
+            if(c=='e')
+            {
+                lprintf("end\r\n");
+                break;
+            }
+            else if(c=='1')
+            {
+                lprintf("back 10 frames\r\n");
+                ifi-=10;
+            }
+            else if(c=='2')
+            {
+                lprintf("forward 10 frames\r\n");
+                ifi+=10;
+            }
+            else if(c=='q')
+            {
+                lprintf("back 100 frames\r\n");
+                ifi-=100;
+            }
+            else if(c=='w')
+            {
+                lprintf("forward 100 frames\r\n");
+                ifi+=100;
+            }
+            else if(c=='a')
+            {
+                lprintf("back 1000 frames\r\n");
+                ifi-=1000;
+            }
+            else if(c=='s')
+            {
+                lprintf("forward 1000 frames\r\n");
+                ifi+=1000;
+            }
+            else if(c=='z')
+            {
+                lprintf("back 10000 frames\r\n");
+                ifi-=10000;
+            }
+            else if(c=='x')
+            {
+                lprintf("forward 10000 frames\r\n");
+                ifi+=10000;
+            }
+            if(ifi>=MAX_PICS){
+                ifi-=MAX_PICS;
+            }
+            if(ifi<0){
+                ifi+=MAX_PICS;
+            }
+            fi=ifi;
+            sec_r=START_SECTORS_PIC+SECTORS_PER_PIC*fi;
         }
     }
 }
