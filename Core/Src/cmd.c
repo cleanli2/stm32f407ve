@@ -662,7 +662,7 @@ void cam2sd(char*p)
 }
 void sd2lcd(char*p)
 {
-    uint np, npic=1, fi=0, sec_r, l_ts=0, ts;
+    uint np, npic=1, fi=0, sec_r, l_ts=0, ts, pause=0;
     if(!g_lcd){
         lprintf("no lcd\r\n");
         return;
@@ -700,7 +700,12 @@ void sd2lcd(char*p)
         sd_read((u8*)CAM2SD_DMA_ADDR, sec_r, SECTORS_PER_PIC/3);
         rgb565_to_lcd_noswap((u8*)CAM2SD_DMA_ADDR, HALF_CAM2SD_DMA_SIZE);
         sec_r+=SECTORS_PER_PIC/3;
-        fi++;
+        if(pause==0){
+            fi++;
+        }
+        else{
+            sec_r-=SECTORS_PER_PIC;
+        }
         if(con_is_recved())
         {
             char c=con_recv();
@@ -749,6 +754,18 @@ void sd2lcd(char*p)
             {
                 lprintf("forward 10000 frames\r\n");
                 ifi+=10000;
+            }
+            else if(c==' ')
+            {
+                if(!pause)
+                {
+                    pause=1;
+                    lprintf("pause\r\n");
+                }
+                else{
+                    pause=0;
+                    lprintf("play\r\n");
+                }
             }
             if(ifi>=MAX_PICS){
                 ifi-=MAX_PICS;
