@@ -778,6 +778,49 @@ void sd2lcd(char*p)
         }
     }
 }
+void poff(char *p)
+{
+    char*p1;
+    uint32_t np = get_howmany_para(p);
+    //RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+    __HAL_RCC_PWR_CLK_ENABLE();
+    lprintf("number of para=%d\r\n", np);
+    if(np==0){
+        lprintf("Power OFF!(not implement)\r\n");
+        //power_off();
+    }
+    else{
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\r\n", p1);
+    }
+    if(!strcmp(p1, "sleep")){
+        lprintf("goto sleep\r\n");
+        //__WFI();
+        lprintf("wake from sleep\r\n");
+    }
+    else if(!strcmp(p1, "stop")){
+        lprintf("goto stop\r\n");
+        //PWR_EnterSTOPMode(PWR_Regulator_LowPower,PWR_STOPEntry_WFI);
+        lprintf("wake from stop\r\n");
+    }
+    else if(!strcmp(p1, "standby")){
+        //PWR_WakeUpPinCmd (DISABLE);
+        HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+        //PWR->CR |= PWR_CR_CWUF;
+        //PWR_WakeUpPinCmd (ENABLE);
+        //PWR_EnterSTANDBYMode();
+        lprintf("goto standby\r\n");
+        HAL_PWR_EnterSTANDBYMode();
+        lprintf("standby fail if you see this\r\n");
+    }
+    else{
+        lprintf("error para.\r\n");
+    }
+    con_send('\n');
+
+    return;
+
+}
 static const struct command cmd_list[]=
 {
     {"cam2sd",cam2sd},
@@ -788,6 +831,7 @@ static const struct command cmd_list[]=
     {"hr",read_mem16},
     {"hw",write_mem16},
     {"pm", print_mem},
+    {"poff", poff},
     {"r",read_mem},
     {"reboot",reboot},
     {"sd2lcd",sd2lcd},
