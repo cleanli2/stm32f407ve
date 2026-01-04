@@ -163,14 +163,14 @@ int main(void)
   MX_TIM12_Init();
   MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
-  if (HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1) != HAL_OK)
+  if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4) != HAL_OK)
   {
     /* PWM Generation Error */
-    lprintf("pwm on PB9 fail\r\n");
+    lprintf("pwm on PA11 fail\r\n");
     Error_Handler();
   }
   else{
-    lprintf("pwm on PB9 start OK\r\n");
+    lprintf("pwm on PA11 start OK\r\n");
   }
 
   /* USER CODE END 2 */
