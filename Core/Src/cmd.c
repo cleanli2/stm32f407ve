@@ -556,6 +556,7 @@ void cam2sd(char*p)
     while(npic--){
         u32 sv_ms=HAL_GetTick();
         HAL_DCMI_Stop(&hdcmi);
+        HAL_Delay (80);//lower fps
         ret=HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)CAM2SD_DMA_ADDR, CAM2SD_DMA_SIZE/4);
         (void)ret;
         //prt_hex(ret);
