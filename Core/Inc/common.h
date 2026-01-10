@@ -4,7 +4,7 @@
 #include "lprintf.h"
 #include "cmd.h"
 #include "stm32f4xx_hal.h"
-
+#define CMD_MAX_NOINPUT_TIMEOUT (2*60*1000)
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;

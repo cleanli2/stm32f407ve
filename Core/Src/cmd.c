@@ -1098,9 +1098,14 @@ void run_cmd_interface()
 
     while(!quit_cmd){
         last_c = c;
+        int timest=HAL_GetTick();
         //wait_input();
         while ((__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == 0)){
             event_handle();
+            if((HAL_GetTick()-timest)>CMD_MAX_NOINPUT_TIMEOUT){
+                lprint("Cmd terminal no input timeout! Go standby\r\n>");
+                poff("standby");
+            }
         }
         c = con_recv();
         if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
